@@ -52,3 +52,34 @@ exports.addTransaction = async (req, res, next) => {
     }
   }
 };
+
+// @desc    Hapus transaksi
+// @route   DELETE /api/v1/transactions/:id
+// @access  Public
+exports.deleteTransaction = async (req, res, next) => {
+  try {
+    // 1. Cari transaksi berdasarkan ID yang dikirim
+    const transaction = await Transaction.findById(req.params.id);
+
+    // 2. Kalau tidak ketemu, kasih error
+    if (!transaction) {
+      return res.status(404).json({
+        success: false,
+        error: "Transaksi tidak ditemukan",
+      });
+    }
+
+    // 3. Kalau ketemu, hapus!
+    await transaction.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      data: {},
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Server Error",
+    });
+  }
+};

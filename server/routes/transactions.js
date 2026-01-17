@@ -5,13 +5,15 @@ const router = express.Router();
 const {
   getTransactions,
   addTransaction,
+  deleteTransaction,
 } = require("../controllers/transactionController");
-
 // Mengatur rute
 // Kalau ada yang akses '/' (root) dari file ini:
 router
   .route("/")
   .get(getTransactions) // Kalau metodenya GET -> jalankan fungsi getTransactions
   .post(addTransaction); // Kalau metodenya POST -> jalankan fungsi addTransaction
+
+router.route("/:id").delete(deleteTransaction);
 
 module.exports = router;

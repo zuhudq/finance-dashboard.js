@@ -1,11 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../context/GlobalState";
 
-// Kita buat komponen kecil untuk merapikan item (Transaction Item)
-// Biar codingan di bawah nggak kepanjangan
+// Komponen Item Kecil
 const Transaction = ({ transaction }) => {
   const { deleteTransaction } = useContext(GlobalContext);
-
   const sign = transaction.amount < 0 ? "-" : "+";
 
   return (
@@ -14,8 +12,9 @@ const Transaction = ({ transaction }) => {
       <span>
         {sign}Rp {Math.abs(transaction.amount)}
       </span>
+      {/* Perhatikan: Kita pakai _id karena MongoDB */}
       <button
-        onClick={() => deleteTransaction(transaction.id)}
+        onClick={() => deleteTransaction(transaction._id)}
         className="delete-btn"
       >
         x
@@ -24,16 +23,22 @@ const Transaction = ({ transaction }) => {
   );
 };
 
+// Komponen Utama
 export const TransactionList = () => {
-  // Ambil data transactions dari Global Context
-  const { transactions } = useContext(GlobalContext);
+  const { transactions, getTransactions } = useContext(GlobalContext);
+
+  // Panggil fungsi ambil data saat pertama kali load
+  useEffect(() => {
+    getTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
       <h3>Riwayat Transaksi</h3>
       <ul className="list">
         {transactions.map((transaction) => (
-          <Transaction key={transaction.id} transaction={transaction} />
+          <Transaction key={transaction._id} transaction={transaction} />
         ))}
       </ul>
     </>

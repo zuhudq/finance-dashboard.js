@@ -11,9 +11,8 @@ export const AddTransaction = () => {
     e.preventDefault(); // Mencegah halaman refresh sendiri
 
     const newTransaction = {
-      id: Math.floor(Math.random() * 100000000), // Bikin ID acak sementara
       text,
-      amount: +amount, // Tanda + untuk memaksa string jadi number
+      amount: +amount,
     };
 
     addTransaction(newTransaction);
