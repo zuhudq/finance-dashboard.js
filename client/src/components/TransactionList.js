@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../context/GlobalState";
+import { formatRupiah } from "../utils/formatRupiah"; // Import
 
-// Komponen Item Kecil
 const Transaction = ({ transaction }) => {
   const { deleteTransaction } = useContext(GlobalContext);
   const sign = transaction.amount < 0 ? "-" : "+";
@@ -9,10 +9,11 @@ const Transaction = ({ transaction }) => {
   return (
     <li className={transaction.amount < 0 ? "minus" : "plus"}>
       {transaction.text}
+      {/* Gabungkan tanda +/- dengan format rupiah mutlak (tanpa minus bawaan) */}
       <span>
-        {sign}Rp {Math.abs(transaction.amount)}
+        {sign}
+        {formatRupiah(Math.abs(transaction.amount))}
       </span>
-      {/* Perhatikan: Kita pakai _id karena MongoDB */}
       <button
         onClick={() => deleteTransaction(transaction._id)}
         className="delete-btn"
