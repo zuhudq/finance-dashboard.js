@@ -1,19 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-// Panggil controller yang tadi kita buat
+// Pastikan cuma ada SATU baris ini yang memuat 4 fungsi sekaligus
 const {
   getTransactions,
   addTransaction,
   deleteTransaction,
+  updateTransaction,
 } = require("../controllers/transactionController");
-// Mengatur rute
-// Kalau ada yang akses '/' (root) dari file ini:
-router
-  .route("/")
-  .get(getTransactions) // Kalau metodenya GET -> jalankan fungsi getTransactions
-  .post(addTransaction); // Kalau metodenya POST -> jalankan fungsi addTransaction
 
-router.route("/:id").delete(deleteTransaction);
+router.route("/").get(getTransactions).post(addTransaction);
+
+router.route("/:id").delete(deleteTransaction).put(updateTransaction);
 
 module.exports = router;

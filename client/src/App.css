@@ -1,5 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
+
 :root {
   --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --primary-color: #9c88ff;
+  --secondary-color: #f39c12; /* Warna Edit */
+  --danger-color: #c0392b; /* Warna Hapus */
+  --success-color: #2ecc71;
+  --bg-color: #f7f7f7;
 }
 
 * {
@@ -7,7 +14,7 @@
 }
 
 body {
-  background-color: #f7f7f7;
+  background-color: var(--bg-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,30 +22,30 @@ body {
   min-height: 100vh;
   margin: 0;
   font-family: "Lato", sans-serif;
-  font-size: 18px;
+  font-size: 16px; /* Font size sedikit dikecilkan biar elegan */
 }
 
 .container {
   margin: 30px auto;
-  width: 400px;
+  width: 450px; /* Lebarkan dikit biar tombol muat */
 }
 
 h1 {
   letter-spacing: 1px;
   margin: 0;
+  text-align: center;
 }
-
 h3 {
   border-bottom: 1px solid #bbb;
   padding-bottom: 10px;
   margin: 40px 0 10px;
 }
-
 h4 {
   margin: 0;
   text-transform: uppercase;
 }
 
+/* --- BALANCE & INC/EXP --- */
 .inc-exp-container {
   background-color: #fff;
   box-shadow: var(--box-shadow);
@@ -46,13 +53,13 @@ h4 {
   display: flex;
   justify-content: space-between;
   margin: 20px 0;
+  border-radius: 10px; /* Rounded corner biar modern */
 }
 
 .inc-exp-container > div {
   flex: 1;
   text-align: center;
 }
-
 .inc-exp-container > div:first-of-type {
   border-right: 1px solid #dedede;
 }
@@ -61,48 +68,69 @@ h4 {
   font-size: 20px;
   letter-spacing: 1px;
   margin: 5px 0;
+  font-weight: bold;
 }
-
 .money.plus {
-  color: #2ecc71;
+  color: var(--success-color);
 }
-
 .money.minus {
-  color: #c0392b;
+  color: var(--danger-color);
 }
 
+/* --- FORM INPUT --- */
 label {
   display: inline-block;
   margin: 10px 0;
+  font-weight: bold;
 }
 
 input[type="text"],
 input[type="number"] {
   border: 1px solid #dedede;
-  border-radius: 2px;
+  border-radius: 5px; /* Rounded */
   display: block;
   font-size: 16px;
-  padding: 10px;
+  padding: 12px; /* Lebih lega */
   width: 100%;
+  transition: border 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* --- TOMBOL FORM (Side by Side) --- */
+.form-actions {
+  display: flex;
+  gap: 10px; /* Jarak antar tombol */
+  margin-top: 20px;
 }
 
 .btn {
   cursor: pointer;
-  background-color: #9c88ff;
+  background-color: var(--primary-color);
   box-shadow: var(--box-shadow);
   color: #fff;
   border: 0;
   display: block;
   font-size: 16px;
-  margin: 10px 0 30px;
-  padding: 10px;
+  padding: 12px;
   width: 100%;
+  border-radius: 5px;
+  transition: opacity 0.3s;
+  font-weight: bold;
 }
 
-.btn:focus {
-  outline: 0;
+.btn-cancel {
+  background-color: #95a5a6 !important; /* Warna abu-abu */
 }
 
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* --- LIST TRANSAKSI (FLEXBOX LAYOUT) --- */
 .list {
   list-style-type: none;
   padding: 0;
@@ -113,37 +141,71 @@ input[type="number"] {
   background-color: #fff;
   box-shadow: var(--box-shadow);
   color: #333;
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-  padding: 10px;
+  display: flex; /* Flexbox */
+  justify-content: space-between; /* Kiri & Kanan mentok */
+  align-items: center; /* Vertikal tengah */
+  padding: 15px; /* Padding lega */
   margin: 10px 0;
+  border-radius: 5px;
+  position: relative; /* Untuk border warna */
+  overflow: hidden; /* Biar border radius rapi */
 }
 
+/* Border warna di kiri */
 .list li.plus {
-  border-right: 5px solid #2ecc71;
+  border-left: 6px solid var(--success-color);
 }
-
 .list li.minus {
-  border-right: 5px solid #c0392b;
+  border-left: 6px solid var(--danger-color);
 }
 
-.delete-btn {
+/* Teks Transaksi (Kiri) */
+.transaction-text {
+  font-weight: 500;
+  flex: 1; /* Ambil sisa ruang */
+  margin-right: 10px;
+  word-break: break-word; /* Biar teks panjang turun ke bawah */
+}
+
+/* Group Kanan (Harga & Tombol) */
+.transaction-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Jarak antar elemen kanan */
+}
+
+.amount {
+  font-weight: bold;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* Tombol Kecil di List */
+.btn-action {
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
   cursor: pointer;
-  background-color: #e74c3c;
-  border: 0;
-  color: #fff;
-  font-size: 20px;
-  line-height: 20px;
-  padding: 2px 5px;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translate(-100%, -50%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  font-size: 12px;
+  color: white;
+  transition: transform 0.1s;
 }
 
-.list li:hover .delete-btn {
-  opacity: 1;
+.btn-action:active {
+  transform: scale(0.95);
+}
+
+.edit-btn {
+  background-color: var(--secondary-color);
+}
+.delete-btn {
+  background-color: var(--danger-color);
+  font-weight: bold;
+}
+
+.edit-btn:hover {
+  background-color: #e67e22;
+}
+.delete-btn:hover {
+  background-color: #a93226;
 }

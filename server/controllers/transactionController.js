@@ -83,3 +83,34 @@ exports.deleteTransaction = async (req, res, next) => {
     });
   }
 };
+
+exports.updateTransaction = async (req, res, next) => {
+  try {
+    // 1. Cari data lama berdasarkan ID
+    let transaction = await Transaction.findById(req.params.id);
+
+    // 2. Kalau tidak ketemu
+    if (!transaction) {
+      return res.status(404).json({
+        success: false,
+        error: "Transaksi tidak ditemukan",
+      });
+    }
+
+    // 3. Kalau ketemu, update isinya
+    transaction = await Transaction.findByIdAndUpdate(req.params.id, req.body, {
+      new: true, // Supaya yang dikembalikan adalah data yang SUDAH diedit
+      runValidators: true, // Cek aturan validasi lagi
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: transaction,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Server Error",
+    });
+  }
+};
