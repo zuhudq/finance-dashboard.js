@@ -7,6 +7,7 @@ import { TransactionList } from "./components/TransactionList";
 import { AddTransaction } from "./components/AddTransaction";
 import { IncomeExpenseChart } from "./components/IncomeExpenseChart";
 import { ExpenseChart } from "./components/ExpenseChart";
+import { MonthFilter } from "./components/MonthFilter"; // Pastikan file ini sudah dibuat
 
 import { GlobalProvider } from "./context/GlobalState";
 
@@ -15,6 +16,11 @@ function App() {
     <GlobalProvider>
       <div className="container">
         <Header />
+
+        {/* [MODIFIKASI] Menambahkan Filter Bulan Di Sini */}
+        {/* Posisi strategis: Di bawah Judul, Di atas Saldo */}
+        <MonthFilter />
+        {/* ------------------------------------------- */}
 
         {/* BARIS 1: KARTU SALDO & RINGKASAN */}
         <div className="dashboard-row summary-row">

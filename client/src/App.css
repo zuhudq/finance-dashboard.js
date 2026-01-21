@@ -144,7 +144,8 @@ h4 {
 
   .chart-card {
     /* [KUNCI 3] Paksa tinggi kartu 350px. !important agar tidak ditawar browser */
-    height: 350px !important;
+    height: auto;
+    min-height: 380px;
     width: 100%;
     margin-bottom: 15px;
   }
@@ -335,4 +336,29 @@ select:focus {
 }
 .money.minus {
   color: var(--danger);
+}
+
+/* --- INPUT DUIT YANG CANTIK --- */
+.input-group {
+  position: relative; /* Wadah relatif */
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%); /* Pas di tengah vertikal */
+  color: #b2bec3;
+  font-weight: 600;
+  font-size: 1rem;
+  pointer-events: none; /* Supaya klik tembus ke input */
+}
+
+/* Kelas khusus untuk input yang ada 'Rp'-nya */
+.money-input {
+  padding-left: 45px !important; /* Geser teks ke kanan biar gak nabrak 'Rp' */
+  font-weight: 600;
+  color: var(--text-dark);
+  letter-spacing: 1px;
 }

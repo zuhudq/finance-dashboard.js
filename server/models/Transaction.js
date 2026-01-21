@@ -10,12 +10,16 @@ const TransactionSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Silakan tambahkan angka positif atau negatif"],
   },
-  // Update bagian ini:
   category: {
     type: String,
     required: [true, "Silakan pilih kategori"],
-    enum: ["Gaji", "Makanan", "Transport", "Tagihan", "Hiburan", "Lainnya"], // Pilihan wajib
+    enum: ["Gaji", "Makanan", "Transport", "Tagihan", "Hiburan", "Lainnya"],
     default: "Lainnya",
+  },
+  // [BARU] Field khusus untuk tanggal transaksi
+  transactionDate: {
+    type: Date,
+    default: Date.now, // Kalau user gak isi, otomatis hari ini
   },
   createdAt: {
     type: Date,
