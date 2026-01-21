@@ -1,25 +1,25 @@
 const mongoose = require("mongoose");
 
-// Kita desain tabelnya di sini
 const TransactionSchema = new mongoose.Schema({
   text: {
     type: String,
-    required: [true, "Tolong isi keterangan transaksi"], // Validasi: Wajib isi
     trim: true,
+    required: [true, "Silakan tambahkan teks"],
   },
   amount: {
     type: Number,
-    required: [true, "Tolong isi nominal uang"],
-    // Kalau positif = Income, Negatif = Expense
+    required: [true, "Silakan tambahkan angka positif atau negatif"],
   },
+  // Update bagian ini:
   category: {
     type: String,
-    required: false,
-    default: "General",
+    required: [true, "Silakan pilih kategori"],
+    enum: ["Gaji", "Makanan", "Transport", "Tagihan", "Hiburan", "Lainnya"], // Pilihan wajib
+    default: "Lainnya",
   },
   createdAt: {
     type: Date,
-    default: Date.now, // Otomatis isi tanggal saat ini
+    default: Date.now,
   },
 });
 

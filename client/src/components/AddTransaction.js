@@ -2,77 +2,108 @@ import React, { useState, useContext, useEffect } from "react";
 import { GlobalContext } from "../context/GlobalState";
 
 export const AddTransaction = () => {
+  // 1. Tambah State baru untuk Category (Default: Lainnya)
   const [text, setText] = useState("");
   const [amount, setAmount] = useState(0);
+  const [category, setCategory] = useState("Lainnya");
 
-  // 1. Ambil state dan fungsi baru dari Context
+  // Ambil fungsi dari Context
   const { addTransaction, currentTransaction, updateTransaction, clearEdit } =
     useContext(GlobalContext);
 
-  // 2. useEffect: Memantau perubahan "currentTransaction"
+  // 2. Update useEffect: Kalau mode edit, isi kategori juga
   useEffect(() => {
     if (currentTransaction !== null) {
       setText(currentTransaction.text);
       setAmount(currentTransaction.amount);
+      // Pakai kategori dari data lama, atau default 'Lainnya' kalau kosong
+      setCategory(currentTransaction.category || "Lainnya");
     } else {
       setText("");
       setAmount(0);
+      setCategory("Lainnya");
     }
   }, [currentTransaction]);
 
   const onSubmit = (e) => {
     e.preventDefault();
 
-    // 3. Cek: Kita lagi mode Edit atau mode Tambah?
     if (currentTransaction !== null) {
-      // --- LOGIKA EDIT (UPDATE) ---
+      // --- LOGIKA UPDATE ---
       const updatedTransaction = {
         text,
         amount: +amount,
+        category, // Masukkan kategori
       };
 
-      // Panggil fungsi Update API
       updateTransaction(currentTransaction._id, updatedTransaction);
-
-      // Keluar dari mode edit
       clearEdit();
     } else {
-      // --- LOGIKA TAMBAH (CREATE) ---
+      // --- LOGIKA TAMBAH BARU ---
       const newTransaction = {
         text,
         amount: +amount,
+        category, // Masukkan kategori
       };
 
       addTransaction(newTransaction);
     }
 
-    // Reset Form
+    // Reset Form ke awal
     setText("");
     setAmount(0);
+    setCategory("Lainnya");
   };
 
-  // Fungsi untuk batal edit
   const onCancel = () => {
     clearEdit();
     setText("");
     setAmount(0);
+    setCategory("Lainnya");
   };
 
   return (
     <>
-      {/* Judul berubah dinamis */}
       <h3>{currentTransaction ? "Edit Transaksi" : "Tambah Transaksi Baru"}</h3>
 
       <form onSubmit={onSubmit}>
+        {/* INPUT TEKS */}
         <div className="form-control">
           <label htmlFor="text">Keterangan</label>
           <input
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Contoh: Gaji..."
+            placeholder="Contoh: Gaji, Bensin..."
           />
         </div>
+
+        {/* INPUT KATEGORI (DROPDOWN) - INI YANG BARU */}
+        <div className="form-control">
+          <label htmlFor="category">Kategori</label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "12px",
+              borderRadius: "5px",
+              border: "1px solid #dedede",
+              backgroundColor: "#fff",
+              fontSize: "16px",
+            }}
+          >
+            <option value="Lainnya">Pilih Kategori...</option>
+            <option value="Gaji">💰 Gaji</option>
+            <option value="Makanan">🍔 Makanan</option>
+            <option value="Transport">🚗 Transport</option>
+            <option value="Tagihan">🏠 Tagihan</option>
+            <option value="Hiburan">🎬 Hiburan</option>
+            <option value="Lainnya">🔹 Lainnya</option>
+          </select>
+        </div>
+
+        {/* INPUT JUMLAH */}
         <div className="form-control">
           <label htmlFor="amount">
             Jumlah <br />
@@ -86,8 +117,7 @@ export const AddTransaction = () => {
           />
         </div>
 
-        {/* --- BAGIAN INI YANG KITA RAPIKAN --- */}
-        {/* Kita bungkus tombol dalam div 'form-actions' biar sejajar */}
+        {/* TOMBOL AKSI */}
         <div className="form-actions">
           <button
             className="btn"
@@ -98,14 +128,12 @@ export const AddTransaction = () => {
             {currentTransaction ? "Update Transaksi" : "Tambah Transaksi"}
           </button>
 
-          {/* Tombol Batal cuma muncul pas edit */}
           {currentTransaction && (
             <button type="button" onClick={onCancel} className="btn btn-cancel">
               Batal
             </button>
           )}
         </div>
-        {/* ------------------------------------ */}
       </form>
     </>
   );
