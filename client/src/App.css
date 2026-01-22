@@ -365,153 +365,191 @@ select:focus {
   letter-spacing: 1px;
 }
 
-/* --- SPLIT SCREEN AUTH LAYOUT --- */
+/* --- SPLIT SCREEN AUTH LAYOUT (FINAL V4 - NO SCROLL & MOBILE CARD) --- */
+
+/* 1. CONTAINER UTAMA: DIKUNCI BIAR GAK BISA SCROLL */
 .split-screen {
   display: flex;
-  min-height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  background-color: #fff;
+  height: 100vh; /* Paksa tinggi pas 100% layar */
+  width: 100vw; /* Lebar full */
+  overflow: hidden; /* [PENTING] Potong apapun yang lewat batas */
+  background-color: #eaeff2; /* Warna dasar abu */
 }
 
 /* KIRI: IMAGE SIDE */
 .left-pane {
-  flex: 1.3; /* Lebar 60% sekian */
+  flex: 1.2;
   background-image:
     linear-gradient(
-      rgba(108, 92, 231, 0.8),
-      /* Overlay Ungu Transparan */ rgba(108, 92, 231, 0.9)
+      to bottom,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.4) 60%,
+      rgba(0, 0, 0, 0.85) 100%
     ),
-    url("https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1920&auto=format&fit=crop"); /* Foto Grafik Keuangan Professional */
+    url("https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1920&auto=format&fit=crop");
+
   background-size: cover;
   background-position: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 60px;
-  color: white;
+  justify-content: flex-end;
+  padding: 80px 60px;
   position: relative;
 }
 
 .pane-content {
-  max-width: 500px;
-  animation: slideRight 1s ease-out;
+  max-width: 650px;
+  animation: slideUp 1s ease-out;
+  position: relative;
+  z-index: 2;
 }
 
 .brand-title {
-  font-size: 3.5rem;
+  color: #ffffff;
+  font-size: 4rem;
   font-weight: 800;
   margin-bottom: 20px;
+  line-height: 1.1;
   letter-spacing: -1px;
+  text-shadow:
+    2px 2px 0px rgba(0, 0, 0, 0.2),
+    0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
 .brand-quote {
+  color: #f1f2f6;
   font-size: 1.2rem;
   line-height: 1.6;
-  opacity: 0.9;
-  font-weight: 300;
-  border-left: 4px solid rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+  border-left: 4px solid #6c5ce7;
   padding-left: 20px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 /* KANAN: FORM SIDE */
 .right-pane {
-  flex: 1; /* Lebar 40% */
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
+  background-color: #eaeff2; /* Background Abu Premium */
   padding: 40px;
+  /* Jaga-jaga kalau HP-nya pendek banget (landscape), form tetap bisa discroll DI DALAM area ini */
+  overflow-y: auto;
 }
 
-/* CARD FORM YANG BERSIH (Tanpa Shadow Tebal, Lebih Flat) */
+/* KARTU FORM */
 .auth-card-clean {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
+  background: #ffffff;
+  padding: 50px 40px;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); /* Shadow Mewah */
   animation: fadeIn 0.8s ease-in;
 }
 
-/* INPUT STYLING YANG LEBIH TAJAM */
+.auth-header h2 {
+  color: #2d3436;
+  font-weight: 800;
+  font-size: 2.2rem;
+  margin-bottom: 5px;
+}
+
+/* INPUT STYLING */
 .form-group label {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #2d3436;
+  color: #636e72;
   margin-bottom: 8px;
   display: block;
+  margin-top: 20px;
 }
 
 .form-group input {
   width: 100%;
-  padding: 15px;
-  border: 1px solid #dfe6e9; /* Border tipis elegan */
-  border-radius: 8px;
+  padding: 16px;
+  border: 2px solid #f1f2f6;
+  border-radius: 12px;
   font-size: 1rem;
-  background-color: #fcfcfc;
+  background-color: #f9f9f9;
   transition: all 0.3s;
+  color: #2d3436;
 }
 
 .form-group input:focus {
-  border-color: #6c5ce7;
+  outline: none;
   background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1); /* Glow effect halus */
+  border-color: #6c5ce7;
+  box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
 }
 
 .auth-btn {
   width: 100%;
-  padding: 15px;
+  padding: 18px;
   background: #6c5ce7;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 30px;
   transition: 0.3s;
-  letter-spacing: 0.5px;
+  box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
 }
 
 .auth-btn:hover {
   background: #5649c0;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(108, 92, 231, 0.4);
 }
 
 .auth-link {
   color: #6c5ce7;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
 }
 
-/* ANIMASI HALUS */
-@keyframes slideRight {
+/* ANIMASI */
+@keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
-/* RESPONSIVE: Kalau di HP, gambar hilang, sisa form aja */
+/* --- RESPONSIVE MOBILE (FIXED) --- */
 @media (max-width: 900px) {
   .left-pane {
     display: none;
-  }
+  } /* Gambar hilang di HP */
+
+  /* [PERBAIKAN 1] Background TETAP abu-abu, jangan putih */
   .right-pane {
-    flex: 1;
+    background-color: #eaeff2;
+    align-items: center; /* Pastikan kartu di tengah vertikal */
+  }
+
+  /* [PERBAIKAN 2] Kartu TETAP muncul kotaknya (Shadow & Background Putih) */
+  .auth-card-clean {
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Shadow tetap ada */
+    padding: 30px 25px; /* Padding sedikit dikecilkan biar muat di HP kecil */
+    border-radius: 20px;
   }
 }

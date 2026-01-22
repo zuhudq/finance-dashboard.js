@@ -2,11 +2,15 @@ import React, { createContext, useReducer, useState } from "react";
 import AppReducer from "./AppReducer";
 import axios from "axios";
 
-// Initial State
+// Initial State (Ditambah Auth)
 const initialState = {
   transactions: [],
   error: null,
   loading: true,
+  // State Auth Baru
+  token: localStorage.getItem("token"), // Cek apakah ada token tersimpan?
+  isAuthenticated: null,
+  user: null,
 };
 
 export const GlobalContext = createContext(initialState);
@@ -14,15 +18,12 @@ export const GlobalContext = createContext(initialState);
 export const GlobalProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AppReducer, initialState);
 
-  // [BARU] State untuk Edit
+  // State Lokal (Helper UI)
   const [currentTransaction, setCurrentTransaction] = useState(null);
-
-  // [BARU] State untuk Filter Bulan & Tahun
-  // Format default: "2026-01" (YYYY-MM), atau "" untuk Semua Waktu
-  const currentMonth = new Date().toISOString().slice(0, 7); // Ambil "YYYY-MM" hari ini
+  const currentMonth = new Date().toISOString().slice(0, 7);
   const [dateFilter, setDateFilter] = useState(currentMonth);
 
-  // Actions (GET, DELETE, ADD, UPDATE - Tetap Sama)
+  // --- ACTIONS TRANSAKSI (Tetap Sama) ---
   async function getTransactions() {
     try {
       const res = await axios.get("/api/v1/transactions");
@@ -72,36 +73,76 @@ export const GlobalProvider = ({ children }) => {
     setCurrentTransaction(null);
   }
 
-  // [BARU] LOGIKA FILTER SAKTI
-  // Kita buat variabel baru 'filteredTransactions'
-  // Ini yang akan dipakai oleh Chart & Saldo, BUKAN 'state.transactions' mentah
-  const filteredTransactions = state.transactions.filter((transaction) => {
-    if (dateFilter === "") return true; // Kalau filter kosong, tampilkan semua
+  // --- ACTION AUTH (BARU) ---
 
-    // Ambil YYYY-MM dari tanggal transaksi
+  // Register User (Versi Detektif & Anti-Crash)
+  async function register(user) {
+    const config = {
+      headers: { "Content-Type": "application/json" },
+    };
+
+    try {
+      console.log("1. Mengirim data ke backend...", user); // [DEBUG] Cek apakah fungsi jalan
+
+      const res = await axios.post("/api/v1/users/register", user, config);
+
+      console.log("2. Backend merespon sukses:", res.data); // [DEBUG] Cek respon
+
+      dispatch({
+        type: "REGISTER_SUCCESS",
+        payload: res.data,
+      });
+    } catch (err) {
+      console.error("3. Terjadi Error:", err); // [DEBUG] Lihat error asli di console
+
+      // [SOLUSI CRASH] Cek dulu apakah server memberikan respon atau mati total
+      const errorMessage =
+        err.response && err.response.data && err.response.data.error
+          ? err.response.data.error // Error dari Backend (misal: Email kembar)
+          : "Koneksi ke Server Gagal (Cek Terminal Backend)"; // Error Jaringan
+
+      dispatch({
+        type: "REGISTER_FAIL",
+        payload: errorMessage,
+      });
+    }
+  }
+
+  // Logika Filter
+  const filteredTransactions = state.transactions.filter((transaction) => {
+    if (dateFilter === "") return true;
     const transDate = transaction.transactionDate
       ? new Date(transaction.transactionDate).toISOString().slice(0, 7)
       : new Date(transaction.createdAt).toISOString().slice(0, 7);
-
     return transDate === dateFilter;
   });
 
   return (
     <GlobalContext.Provider
       value={{
-        transactions: filteredTransactions, // [PENTING] Kita kirim data yang SUDAH DISARING
-        allTransactions: state.transactions, // Data mentah (kalau butuh)
+        transactions: filteredTransactions,
+        allTransactions: state.transactions,
         error: state.error,
         loading: state.loading,
+
+        // Auth State
+        token: state.token,
+        isAuthenticated: state.isAuthenticated,
+        user: state.user,
+
+        // Helper State
         currentTransaction,
-        dateFilter, // Kirim state filter biar bisa diakses Header
-        setDateFilter, // Kirim fungsi pengubah filter
+        dateFilter,
+        setDateFilter,
+
+        // Functions
         getTransactions,
         deleteTransaction,
         addTransaction,
         updateTransaction,
         editTransaction,
         clearEdit,
+        register, // <-- Export fungsi register
       }}
     >
       {children}

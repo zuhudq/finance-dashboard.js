@@ -1,5 +1,6 @@
 export default function AppReducer(state, action) {
   switch (action.type) {
+    // --- BAGIAN 1: TRANSAKSI ---
     case "GET_TRANSACTIONS":
       return {
         ...state,
@@ -18,7 +19,6 @@ export default function AppReducer(state, action) {
         ...state,
         transactions: [...state.transactions, action.payload],
       };
-    // [BARU] Logika untuk menukar data lama dengan yang baru
     case "UPDATE_TRANSACTION":
       return {
         ...state,
@@ -32,6 +32,28 @@ export default function AppReducer(state, action) {
         ...state,
         error: action.payload,
       };
+
+    // --- BAGIAN 2: AUTHENTICATION (LOGIN/REGISTER) ---
+    case "REGISTER_SUCCESS":
+      localStorage.setItem("token", action.payload.token);
+      return {
+        ...state,
+        ...action.payload,
+        isAuthenticated: true,
+        loading: false,
+      };
+    case "REGISTER_FAIL":
+    case "AUTH_ERROR":
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        token: null,
+        isAuthenticated: false,
+        loading: false,
+        user: null,
+        error: action.payload,
+      };
+
     default:
       return state;
   }
