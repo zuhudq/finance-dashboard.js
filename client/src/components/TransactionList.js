@@ -1,14 +1,14 @@
 import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../context/GlobalState";
 import { formatRupiah } from "../utils/formatRupiah";
-import Swal from "sweetalert2"; // 1. Import SweetAlert
+import Swal from "sweetalert2";
 
+// Komponen Item Transaksi (Biarkan Kecil di sini)
 const Transaction = ({ transaction }) => {
   const { deleteTransaction, editTransaction } = useContext(GlobalContext);
   const sign = transaction.amount < 0 ? "-" : "+";
   const amountClass = transaction.amount < 0 ? "minus" : "plus";
 
-  // Format Tanggal: "Kamis, 22 Jan 2026"
   const dateObj = new Date(
     transaction.transactionDate || transaction.createdAt,
   );
@@ -19,10 +19,9 @@ const Transaction = ({ transaction }) => {
   });
 
   const handleDelete = (id) => {
-    // ... kode sweetalert sama ...
     Swal.fire({
-      title: "Yakin mau hapus?",
-      text: "Data tidak bisa kembali!",
+      title: "Hapus data?",
+      text: "Data akan hilang permanen!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d63031",
@@ -40,8 +39,6 @@ const Transaction = ({ transaction }) => {
     <li className={amountClass}>
       <div className="transaction-info">
         <span className="transaction-text">{transaction.text}</span>
-
-        {/* TAMPILAN BARU: Kategori & Tanggal Sejajar */}
         <div
           style={{
             display: "flex",
@@ -57,9 +54,7 @@ const Transaction = ({ transaction }) => {
           <span style={{ color: "#636e72" }}>{formattedDate}</span>
         </div>
       </div>
-
       <div className="transaction-actions">
-        {/* ... bagian kanan sama ... */}
         <span className={`amount ${amountClass}`}>
           {sign}
           {formatRupiah(Math.abs(transaction.amount))}
@@ -68,7 +63,7 @@ const Transaction = ({ transaction }) => {
           onClick={() => editTransaction(transaction)}
           className="btn-action edit-btn"
         >
-          <i className="fas fa-edit"></i> Edit
+          <i className="fas fa-edit"></i>
         </button>
         <button
           onClick={() => handleDelete(transaction._id)}
@@ -81,10 +76,9 @@ const Transaction = ({ transaction }) => {
   );
 };
 
-// ... (Bagian TransactionList ke bawah TIDAK PERLU DIUBAH, biarkan sama)
+// --- KOMPONEN UTAMA ---
 export const TransactionList = () => {
-  // ... Biarkan kode TransactionList tetap sama ...
-  const { transactions, getTransactions } = useContext(GlobalContext);
+  const { transactions, getTransactions, loading } = useContext(GlobalContext);
 
   useEffect(() => {
     getTransactions();
@@ -94,11 +88,36 @@ export const TransactionList = () => {
   return (
     <>
       <h3>Riwayat Transaksi</h3>
-      <ul className="list">
-        {transactions.map((transaction) => (
-          <Transaction key={transaction._id} transaction={transaction} />
-        ))}
-      </ul>
+
+      {/* LOGIKA EMPTY STATE */}
+      {!loading && transactions.length === 0 ? (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "30px",
+            color: "#b2bec3",
+            border: "2px dashed #dfe6e9",
+            borderRadius: "10px",
+            marginTop: "10px",
+          }}
+        >
+          <span
+            style={{ fontSize: "3rem", display: "block", marginBottom: "10px" }}
+          >
+            📭
+          </span>
+          <p style={{ fontSize: "1rem", fontWeight: "500" }}>
+            Belum ada transaksi di periode ini.
+          </p>
+          <small>Yuk tambah transaksi baru!</small>
+        </div>
+      ) : (
+        <ul className="list">
+          {transactions.map((transaction) => (
+            <Transaction key={transaction._id} transaction={transaction} />
+          ))}
+        </ul>
+      )}
     </>
   );
 };

@@ -1,13 +1,12 @@
 import React, { useContext } from "react";
 import { GlobalContext } from "../context/GlobalState";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
-import { formatRupiah } from "../utils/formatRupiah"; // Kita pakai format rupiah yang udah ada
+import autoTable from "jspdf-autotable"; // [UBAH 1] Import sebagai autoTable
+import { formatRupiah } from "../utils/formatRupiah";
 
 export const MonthFilter = () => {
   const { dateFilter, setDateFilter, transactions } = useContext(GlobalContext);
 
-  // --- FUNGSI CETAK PDF ---
   const generatePDF = () => {
     // 1. Siapkan Dokumen
     const doc = new jsPDF();
@@ -18,12 +17,16 @@ export const MonthFilter = () => {
 
     doc.setFontSize(11);
     doc.setTextColor(100);
+    // Format tanggal cantik
     const periode = dateFilter
-      ? `Periode: ${new Date(dateFilter).toLocaleString("id-ID", { month: "long", year: "numeric" })}`
-      : "Periode: Semua Waktu";
-    doc.text(periode, 14, 30);
+      ? new Date(dateFilter).toLocaleString("id-ID", {
+          month: "long",
+          year: "numeric",
+        })
+      : "Semua Waktu";
+    doc.text(`Periode: ${periode}`, 14, 30);
 
-    // 3. Ringkasan Saldo (Opsional, biar keren)
+    // 3. Ringkasan Saldo
     const totalIncome = transactions
       .filter((t) => t.amount > 0)
       .reduce((acc, item) => (acc += item.amount), 0);
@@ -42,17 +45,17 @@ export const MonthFilter = () => {
       50,
     );
 
-    // 4. Bikin Tabel Otomatis
+    // 4. Siapkan Data Tabel
     const tableColumn = ["Tanggal", "Keterangan", "Kategori", "Jumlah"];
     const tableRows = [];
 
     transactions.forEach((transaction) => {
-      const transactionDate = new Date(
-        transaction.transactionDate || transaction.createdAt,
-      ).toLocaleDateString("id-ID");
+      // Handle tanggal fallback
+      const dateRaw = transaction.transactionDate || transaction.createdAt;
+      const transactionDate = new Date(dateRaw).toLocaleDateString("id-ID");
+
       const amountData = formatRupiah(transaction.amount);
 
-      // Masukkan data ke baris
       const transactionData = [
         transactionDate,
         transaction.text,
@@ -62,16 +65,17 @@ export const MonthFilter = () => {
       tableRows.push(transactionData);
     });
 
-    // Generate Tabel
-    doc.autoTable({
+    // 5. [UBAH 2] Generate Tabel dengan Syntax Baru
+    // Panggil autoTable, lalu masukkan 'doc' sebagai parameter pertama
+    autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
-      startY: 55, // Mulai gambar tabel di koordinat Y=55 (di bawah ringkasan)
-      theme: "grid", // Gaya tabel kotak-kotak rapi
-      headStyles: { fillColor: [108, 92, 231] }, // Warna Header Ungu (sesuai tema kita)
+      startY: 55,
+      theme: "grid",
+      headStyles: { fillColor: [108, 92, 231] }, // Warna Ungu
     });
 
-    // 5. Simpan File
+    // 6. Simpan File
     doc.save(`Laporan_Keuangan_${dateFilter || "All"}.pdf`);
   };
 
@@ -83,10 +87,9 @@ export const MonthFilter = () => {
         alignItems: "center",
         justifyContent: "center",
         gap: "10px",
-        flexWrap: "wrap", // Biar aman di HP kalau tombol kepanjangan
+        flexWrap: "wrap",
       }}
     >
-      {/* Label & Input Filter */}
       <label style={{ fontWeight: "bold", color: "#2d3436" }}>Periode:</label>
       <input
         type="month"
@@ -101,7 +104,6 @@ export const MonthFilter = () => {
         }}
       />
 
-      {/* Tombol Reset */}
       <button
         onClick={() => setDateFilter("")}
         style={{
@@ -117,14 +119,13 @@ export const MonthFilter = () => {
         Semua
       </button>
 
-      {/* --- TOMBOL DOWNLOAD PDF (BARU) --- */}
       <button
         onClick={generatePDF}
         style={{
           padding: "8px 15px",
           borderRadius: "8px",
           border: "none",
-          background: "#00b894", // Warna Hijau Sukses
+          background: "#00b894",
           color: "#fff",
           cursor: "pointer",
           fontWeight: "600",

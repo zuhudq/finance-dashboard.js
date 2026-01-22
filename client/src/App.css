@@ -20,15 +20,17 @@ body {
   background-color: var(--bg-color);
   font-family: "Poppins", sans-serif;
   margin: 0;
-  padding: 20px;
+  padding: 0; /* UBAH JADI 0, biar navbar nempel atas */
+  padding-bottom: 50px; /* Jarak bawah biar napas */
   color: var(--text-dark);
 }
 
-/* CONTAINER UTAMA */
+/* Update Container biar gak ketutup navbar dan tetap rapi */
 .container {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 15px;
+  margin-top: 20px; /* Jarak dari navbar ke konten */
 }
 
 h1 {
@@ -361,4 +363,155 @@ select:focus {
   font-weight: 600;
   color: var(--text-dark);
   letter-spacing: 1px;
+}
+
+/* --- SPLIT SCREEN AUTH LAYOUT --- */
+.split-screen {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+/* KIRI: IMAGE SIDE */
+.left-pane {
+  flex: 1.3; /* Lebar 60% sekian */
+  background-image:
+    linear-gradient(
+      rgba(108, 92, 231, 0.8),
+      /* Overlay Ungu Transparan */ rgba(108, 92, 231, 0.9)
+    ),
+    url("https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1920&auto=format&fit=crop"); /* Foto Grafik Keuangan Professional */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px;
+  color: white;
+  position: relative;
+}
+
+.pane-content {
+  max-width: 500px;
+  animation: slideRight 1s ease-out;
+}
+
+.brand-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  letter-spacing: -1px;
+}
+
+.brand-quote {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  font-weight: 300;
+  border-left: 4px solid rgba(255, 255, 255, 0.5);
+  padding-left: 20px;
+}
+
+/* KANAN: FORM SIDE */
+.right-pane {
+  flex: 1; /* Lebar 40% */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 40px;
+}
+
+/* CARD FORM YANG BERSIH (Tanpa Shadow Tebal, Lebih Flat) */
+.auth-card-clean {
+  width: 100%;
+  max-width: 400px;
+  animation: fadeIn 0.8s ease-in;
+}
+
+/* INPUT STYLING YANG LEBIH TAJAM */
+.form-group label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #2d3436;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #dfe6e9; /* Border tipis elegan */
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fcfcfc;
+  transition: all 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #6c5ce7;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1); /* Glow effect halus */
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 15px;
+  background: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
+  letter-spacing: 0.5px;
+}
+
+.auth-btn:hover {
+  background: #5649c0;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+}
+
+.auth-link {
+  color: #6c5ce7;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ANIMASI HALUS */
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RESPONSIVE: Kalau di HP, gambar hilang, sisa form aja */
+@media (max-width: 900px) {
+  .left-pane {
+    display: none;
+  }
+  .right-pane {
+    flex: 1;
+  }
 }
