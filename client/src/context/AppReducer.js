@@ -1,6 +1,6 @@
 export default function AppReducer(state, action) {
   switch (action.type) {
-    // --- BAGIAN 1: TRANSAKSI ---
+    // --- TRANSAKSI ---
     case "GET_TRANSACTIONS":
       return {
         ...state,
@@ -33,17 +33,34 @@ export default function AppReducer(state, action) {
         error: action.payload,
       };
 
-    // --- BAGIAN 2: AUTHENTICATION (LOGIN/REGISTER) ---
+    // --- AUTHENTICATION ---
+
+    // 1. Load User Berhasil (Auto Login)
+    case "USER_LOADED":
+      return {
+        ...state,
+        isAuthenticated: true,
+        loading: false,
+        user: action.payload, // Data user dari backend
+      };
+
+    // 2. Login/Register Berhasil
     case "REGISTER_SUCCESS":
+    case "LOGIN_SUCCESS":
       localStorage.setItem("token", action.payload.token);
       return {
         ...state,
         ...action.payload,
         isAuthenticated: true,
         loading: false,
+        error: null,
       };
+
+    // 3. Gagal / Logout (Disatukan biar tidak DUPLICATE)
+    case "AUTH_ERROR": // <--- Ini disatukan disini
     case "REGISTER_FAIL":
-    case "AUTH_ERROR":
+    case "LOGIN_FAIL":
+    case "LOGOUT":
       localStorage.removeItem("token");
       return {
         ...state,

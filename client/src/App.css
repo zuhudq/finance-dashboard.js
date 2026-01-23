@@ -367,13 +367,17 @@ select:focus {
 
 /* --- SPLIT SCREEN AUTH LAYOUT (FINAL V4 - NO SCROLL & MOBILE CARD) --- */
 
-/* 1. CONTAINER UTAMA: DIKUNCI BIAR GAK BISA SCROLL */
+/* 1. CONTAINER UTAMA: FIXED POSITION (SOLUSI SPACE KOSONG) */
 .split-screen {
   display: flex;
-  height: 100vh; /* Paksa tinggi pas 100% layar */
-  width: 100vw; /* Lebar full */
-  overflow: hidden; /* [PENTING] Potong apapun yang lewat batas */
-  background-color: #eaeff2; /* Warna dasar abu */
+  position: fixed; /* [KUNCI] Memaksa elemen lepas dari aliran body */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Full Layar */
+  overflow: hidden;
+  background-color: #eaeff2;
+  z-index: 999; /* Pastikan dia di atas segalanya */
 }
 
 /* KIRI: IMAGE SIDE */
@@ -552,4 +556,34 @@ select:focus {
     padding: 30px 25px; /* Padding sedikit dikecilkan biar muat di HP kecil */
     border-radius: 20px;
   }
+}
+
+/* --- NAVBAR USER & LOGOUT --- */
+.navbar {
+  display: flex;
+  justify-content: space-between; /* Logo di kiri, User di kanan */
+  align-items: center;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.btn-logout {
+  background-color: #ff7675;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+  font-size: 0.9rem;
+}
+
+.btn-logout:hover {
+  background-color: #d63031;
+  transform: translateY(-2px);
 }

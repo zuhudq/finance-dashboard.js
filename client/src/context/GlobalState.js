@@ -2,13 +2,12 @@ import React, { createContext, useReducer, useState } from "react";
 import AppReducer from "./AppReducer";
 import axios from "axios";
 
-// Initial State (Ditambah Auth)
+// Initial State
 const initialState = {
   transactions: [],
   error: null,
   loading: true,
-  // State Auth Baru
-  token: localStorage.getItem("token"), // Cek apakah ada token tersimpan?
+  token: localStorage.getItem("token"),
   isAuthenticated: null,
   user: null,
 };
@@ -18,12 +17,12 @@ export const GlobalContext = createContext(initialState);
 export const GlobalProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AppReducer, initialState);
 
-  // State Lokal (Helper UI)
+  // State Lokal Helper
   const [currentTransaction, setCurrentTransaction] = useState(null);
   const currentMonth = new Date().toISOString().slice(0, 7);
   const [dateFilter, setDateFilter] = useState(currentMonth);
 
-  // --- ACTIONS TRANSAKSI (Tetap Sama) ---
+  // --- ACTIONS TRANSAKSI ---
   async function getTransactions() {
     try {
       const res = await axios.get("/api/v1/transactions");
@@ -73,39 +72,64 @@ export const GlobalProvider = ({ children }) => {
     setCurrentTransaction(null);
   }
 
-  // --- ACTION AUTH (BARU) ---
+  // --- ACTIONS AUTH ---
 
-  // Register User (Versi Detektif & Anti-Crash)
-  async function register(user) {
-    const config = {
-      headers: { "Content-Type": "application/json" },
-    };
+  // 1. Load User (Auto Login)
+  async function loadUser() {
+    if (localStorage.token) {
+      // Set token ke header axios biar otomatis kebawa
+      axios.defaults.headers.common["Authorization"] =
+        `Bearer ${localStorage.token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+      // Jika token tidak ada, jangan panggil API, langsung return
+      return;
+    }
 
     try {
-      console.log("1. Mengirim data ke backend...", user); // [DEBUG] Cek apakah fungsi jalan
-
-      const res = await axios.post("/api/v1/users/register", user, config);
-
-      console.log("2. Backend merespon sukses:", res.data); // [DEBUG] Cek respon
-
+      const res = await axios.get("/api/v1/users/me");
       dispatch({
-        type: "REGISTER_SUCCESS",
-        payload: res.data,
+        type: "USER_LOADED",
+        payload: res.data.data,
       });
     } catch (err) {
-      console.error("3. Terjadi Error:", err); // [DEBUG] Lihat error asli di console
-
-      // [SOLUSI CRASH] Cek dulu apakah server memberikan respon atau mati total
-      const errorMessage =
-        err.response && err.response.data && err.response.data.error
-          ? err.response.data.error // Error dari Backend (misal: Email kembar)
-          : "Koneksi ke Server Gagal (Cek Terminal Backend)"; // Error Jaringan
-
-      dispatch({
-        type: "REGISTER_FAIL",
-        payload: errorMessage,
-      });
+      dispatch({ type: "AUTH_ERROR" });
     }
+  }
+
+  // 2. Register
+  async function register(user) {
+    const config = { headers: { "Content-Type": "application/json" } };
+    try {
+      const res = await axios.post("/api/v1/users/register", user, config);
+      dispatch({ type: "REGISTER_SUCCESS", payload: res.data });
+      // Setelah register sukses, langsung load user
+      loadUser();
+    } catch (err) {
+      dispatch({ type: "REGISTER_FAIL", payload: err.response.data.error });
+    }
+  }
+
+  // 3. Login
+  async function login(user) {
+    const config = { headers: { "Content-Type": "application/json" } };
+    try {
+      const res = await axios.post("/api/v1/users/login", user, config);
+      dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+      // Setelah login sukses, langsung load user
+      loadUser();
+    } catch (err) {
+      const message =
+        err.response && err.response.data && err.response.data.error
+          ? err.response.data.error
+          : "Login Gagal. Cek server.";
+      dispatch({ type: "LOGIN_FAIL", payload: message });
+    }
+  }
+
+  // 4. Logout
+  function logout() {
+    dispatch({ type: "LOGOUT" });
   }
 
   // Logika Filter
@@ -135,14 +159,19 @@ export const GlobalProvider = ({ children }) => {
         dateFilter,
         setDateFilter,
 
-        // Functions
+        // Functions Transaksi
         getTransactions,
         deleteTransaction,
         addTransaction,
         updateTransaction,
         editTransaction,
         clearEdit,
-        register, // <-- Export fungsi register
+
+        // Functions Auth
+        register,
+        login,
+        logout,
+        loadUser, // <--- INI DIA YANG TADINYA HILANG! SEKARANG SUDAH ADA.
       }}
     >
       {children}

@@ -1,18 +1,49 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { GlobalContext } from "../context/GlobalState";
+import Swal from "sweetalert2";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login:", email, password);
+  const { login, error, isAuthenticated } = useContext(GlobalContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Kalau sudah login, langsung lempar ke Dashboard
+    if (isAuthenticated) {
+      Swal.fire({
+        icon: "success",
+        title: "Login Berhasil!",
+        text: "Selamat datang kembali.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      navigate("/");
+    }
+
+    if (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Gagal",
+        text: error,
+      });
+    }
+  }, [error, isAuthenticated, navigate]);
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      Swal.fire({ icon: "warning", text: "Isi email dan password!" });
+      return;
+    }
+
+    login({ email, password });
   };
 
   return (
     <div className="split-screen">
-      {/* BAGIAN KIRI: GAMBAR & BRANDING */}
+      {/* BAGIAN KIRI: GAMBAR */}
       <div className="left-pane">
         <div className="pane-content">
           <h1 className="brand-title">Smart Finance.</h1>
@@ -35,7 +66,7 @@ export const Login = () => {
             </p>
           </div>
 
-          <form onSubmit={onSubmit}>
+          <form>
             <div className="form-group">
               <label>Email Address</label>
               <input
@@ -43,7 +74,6 @@ export const Login = () => {
                 placeholder="nama@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
             </div>
 
@@ -54,16 +84,18 @@ export const Login = () => {
                 placeholder="Masukkan password..."
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
               />
             </div>
 
-            <button type="submit" className="auth-btn">
+            <button type="button" onClick={handleLogin} className="auth-btn">
               Masuk Dashboard
             </button>
           </form>
 
-          <div className="auth-footer">
+          <div
+            className="auth-footer"
+            style={{ textAlign: "center", marginTop: "20px" }}
+          >
             <p>
               Belum punya akun?{" "}
               <Link to="/register" className="auth-link">

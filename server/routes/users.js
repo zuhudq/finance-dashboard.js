@@ -1,9 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const { registerUser } = require("../controllers/userController"); // Pastikan ini juga ada
+const {
+  registerUser,
+  loginUser,
+  getMe,
+} = require("../controllers/userController");
+const { protect } = require("../middleware/auth"); // Import middleware
 
-// Jalur untuk Register
-// URL Akhir: POST /api/v1/users/register
 router.post("/register", registerUser);
+router.post("/login", loginUser);
+router.get("/me", protect, getMe); // Route baru diproteksi
 
 module.exports = router;
