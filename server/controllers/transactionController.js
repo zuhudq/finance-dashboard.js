@@ -95,13 +95,12 @@ exports.deleteTransaction = async (req, res, next) => {
 // @access  Private
 exports.updateTransaction = async (req, res, next) => {
   try {
-    // [MODIFIKASI] Cek dulu apakah transaksi ini milik user yang login?
+    // 1. Cek Data Lama & Kepemilikan
     let transaction = await Transaction.findOne({
       _id: req.params.id,
       user: req.user.id,
     });
 
-    // 2. Kalau tidak ketemu (atau bukan miliknya)
     if (!transaction) {
       return res.status(404).json({
         success: false,
@@ -109,10 +108,11 @@ exports.updateTransaction = async (req, res, next) => {
       });
     }
 
-    // 3. Kalau valid, update isinya
+    // 2. Lakukan Update
+    // [PENTING] { new: true } artinya kembalikan data SETELAH diedit
     transaction = await Transaction.findByIdAndUpdate(req.params.id, req.body, {
-      new: true, // Supaya yang dikembalikan adalah data yang SUDAH diedit
-      runValidators: true, // Cek aturan validasi lagi
+      new: true,
+      runValidators: true,
     });
 
     return res.status(200).json({

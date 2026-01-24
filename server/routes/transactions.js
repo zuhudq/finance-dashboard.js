@@ -1,20 +1,21 @@
 const express = require("express");
 const router = express.Router();
+// [FIX 1] Pastikan updateTransaction di-import
 const {
   getTransactions,
   addTransaction,
   deleteTransaction,
+  updateTransaction,
 } = require("../controllers/transactionController");
 
-// [PENTING] Panggil Satpam (Middleware)
 const { protect } = require("../middleware/auth");
 
-// Pasang 'protect' di setiap jalur
-router
-  .route("/")
-  .get(protect, getTransactions) // Cek tiket dulu, baru ambil data
-  .post(protect, addTransaction); // Cek tiket dulu, baru simpan data
+router.route("/").get(protect, getTransactions).post(protect, addTransaction);
 
-router.route("/:id").delete(protect, deleteTransaction); // Cek tiket dulu, baru hapus
+router
+  .route("/:id")
+  .delete(protect, deleteTransaction)
+  // [FIX 2] Tambahkan jalur PUT disini!
+  .put(protect, updateTransaction);
 
 module.exports = router;
