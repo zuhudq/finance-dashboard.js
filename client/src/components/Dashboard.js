@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react"; // Tambah useEffect & useContext
 import { Header } from "./Header";
 import { Balance } from "./Balance";
 import { IncomeExpenses } from "./IncomeExpenses";
@@ -11,13 +11,12 @@ import { MonthFilter } from "./MonthFilter";
 import { GlobalContext } from "../context/GlobalState";
 
 export const Dashboard = () => {
-  // 1. Ambil fungsi loadUser dari GlobalContext
-  // Pastikan kamu sudah menambahkan loadUser di GlobalState.js ya!
-  const { loadUser } = useContext(GlobalContext);
+  // Ambil fungsi getTransactions dari GlobalContext
+  const { getTransactions } = useContext(GlobalContext);
 
-  // 2. Panggil loadUser saat komponen pertama kali dimuat (Mounting)
+  // [PENTING] Panggil data transaksi setiap kali Dashboard dibuka
   useEffect(() => {
-    loadUser();
+    getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

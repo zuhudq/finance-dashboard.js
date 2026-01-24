@@ -17,20 +17,20 @@
 }
 
 body {
-  background-color: var(--bg-color);
-  font-family: "Poppins", sans-serif;
+  /* Ganti Putih Silau jadi Soft Grey-Blueish */
+  background-color: #f0f2f5;
+  min-height: 100vh;
   margin: 0;
-  padding: 0; /* UBAH JADI 0, biar navbar nempel atas */
-  padding-bottom: 50px; /* Jarak bawah biar napas */
-  color: var(--text-dark);
+  font-family: "Poppins", sans-serif;
+  padding-bottom: 50px; /* Biar konten gak mentok bawah */
 }
 
 /* Update Container biar gak ketutup navbar dan tetap rapi */
 .container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 15px;
-  margin-top: 20px; /* Jarak dari navbar ke konten */
+  margin: 30px auto;
+  width: 90%; /* Lebih lebar dikit biar lega */
+  max-width: 1200px;
+  /* Jarak dari navbar ke konten */
 }
 
 h1 {
@@ -558,10 +558,34 @@ select:focus {
   }
 }
 
-/* --- NAVBAR USER & LOGOUT --- */
+/* --- NAVBAR PREMIUM (GLASSMORPHISM) --- */
 .navbar {
   display: flex;
-  justify-content: space-between; /* Logo di kiri, User di kanan */
+  justify-content: space-between;
+  align-items: center;
+  /* Warna Putih Transparan + Blur */
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 15px 40px;
+  border-radius: 16px;
+  /* Bayangan lembut melayang */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  position: sticky; /* Nempel pas discroll */
+  top: 20px;
+  z-index: 100;
+  /* Animasi Masuk */
+  animation: slideDown 0.8s ease-out;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #2d3436;
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* Efek teks gradasi */
+  display: flex;
   align-items: center;
 }
 
@@ -569,21 +593,93 @@ select:focus {
   display: flex;
   align-items: center;
   font-size: 1rem;
+  font-weight: 600;
+  color: #636e72;
+  background: #f1f2f6; /* Kapsul abu buat nama user */
+  padding: 5px 5px 5px 20px;
+  border-radius: 50px;
 }
 
 .btn-logout {
-  background-color: #ff7675;
+  background: linear-gradient(135deg, #ff7675, #d63031); /* Gradasi Merah */
   color: white;
   border: none;
-  padding: 8px 15px;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 50px; /* Tombol bulat penuh */
   cursor: pointer;
   font-weight: 600;
-  transition: 0.3s;
-  font-size: 0.9rem;
+  margin-left: 15px;
+  box-shadow: 0 4px 10px rgba(214, 48, 49, 0.3);
+  transition: all 0.3s;
 }
 
 .btn-logout:hover {
-  background-color: #d63031;
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 15px rgba(214, 48, 49, 0.4);
+}
+
+/* Animasi Navbar Turun */
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* --- ANIMASI GLOBAL UNTUK KARTU --- */
+.balance-card,
+.inc-exp-card,
+.chart-card,
+.history-section,
+.form-section {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0; /* Mulai transparan */
+  background: #ffffff; /* Pastikan kartu putih bersih */
+  border-radius: 20px; /* Sudut lebih bulat */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); /* Bayangan super soft */
+  border: 1px solid rgba(0, 0, 0, 0.02); /* Border tipis */
+}
+
+/* Delay Animasi biar muncul satu-satu (Waterfall Effect) */
+.balance-card {
+  animation-delay: 0.1s;
+}
+.inc-exp-card {
+  animation-delay: 0.2s;
+}
+.chart-card {
+  animation-delay: 0.3s;
+}
+.history-section {
+  animation-delay: 0.4s;
+}
+.form-section {
+  animation-delay: 0.5s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading Screen sederhana */
+.loading-screen {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  color: #6c5ce7;
+  font-weight: 600;
+  background-color: #f0f2f5;
 }

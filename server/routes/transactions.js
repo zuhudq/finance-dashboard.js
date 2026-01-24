@@ -1,16 +1,20 @@
 const express = require("express");
 const router = express.Router();
-
-// Pastikan cuma ada SATU baris ini yang memuat 4 fungsi sekaligus
 const {
   getTransactions,
   addTransaction,
   deleteTransaction,
-  updateTransaction,
 } = require("../controllers/transactionController");
 
-router.route("/").get(getTransactions).post(addTransaction);
+// [PENTING] Panggil Satpam (Middleware)
+const { protect } = require("../middleware/auth");
 
-router.route("/:id").delete(deleteTransaction).put(updateTransaction);
+// Pasang 'protect' di setiap jalur
+router
+  .route("/")
+  .get(protect, getTransactions) // Cek tiket dulu, baru ambil data
+  .post(protect, addTransaction); // Cek tiket dulu, baru simpan data
+
+router.route("/:id").delete(protect, deleteTransaction); // Cek tiket dulu, baru hapus
 
 module.exports = router;

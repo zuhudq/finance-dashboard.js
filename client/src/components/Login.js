@@ -11,12 +11,11 @@ export const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Kalau sudah login, langsung lempar ke Dashboard
     if (isAuthenticated) {
       Swal.fire({
         icon: "success",
         title: "Login Berhasil!",
-        text: "Selamat datang kembali.",
+        text: "Mengalihkan ke Dashboard...",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -32,29 +31,31 @@ export const Login = () => {
     }
   }, [error, isAuthenticated, navigate]);
 
+  // [DEBUG] Logika Login Manual
   const handleLogin = () => {
+    console.log("🟢 TOMBOL LOGIN DITEKAN!"); // Cek Console browser nanti
+
     if (!email || !password) {
-      Swal.fire({ icon: "warning", text: "Isi email dan password!" });
+      Swal.fire({ icon: "warning", text: "Mohon isi email dan password!" });
       return;
     }
 
+    // Panggil fungsi login
     login({ email, password });
   };
 
   return (
     <div className="split-screen">
-      {/* BAGIAN KIRI: GAMBAR */}
       <div className="left-pane">
         <div className="pane-content">
           <h1 className="brand-title">Smart Finance.</h1>
           <p className="brand-quote">
             "Kelola keuangan bisnis dan pribadimu dengan cerdas, efisien, dan
-            transparan dalam satu dashboard."
+            transparan."
           </p>
         </div>
       </div>
 
-      {/* BAGIAN KANAN: FORM LOGIN */}
       <div className="right-pane">
         <div className="auth-card-clean">
           <div className="auth-header">
@@ -87,6 +88,7 @@ export const Login = () => {
               />
             </div>
 
+            {/* [FIX] Ganti type='button' dan pasang onClick */}
             <button type="button" onClick={handleLogin} className="auth-btn">
               Masuk Dashboard
             </button>

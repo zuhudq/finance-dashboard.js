@@ -11,88 +11,64 @@ export const Register = () => {
   const { register, error, isAuthenticated } = useContext(GlobalContext);
   const navigate = useNavigate();
 
-  // [DEBUG] Cek apakah fungsi register terbaca dari GlobalState
-  // Buka Console browser, harusnya muncul function(...)
-  console.log("Fungsi Register dari Context:", register);
-
+  // 1. Efek Redirect (Kalau sukses daftar, langsung masuk Dashboard)
   useEffect(() => {
-    // Jika sukses register (isAuthenticated jadi true)
     if (isAuthenticated) {
       Swal.fire({
         icon: "success",
         title: "Registrasi Berhasil!",
-        text: "Selamat datang di Smart Finance.",
-        timer: 2000,
+        text: "Selamat datang di Smart Finance",
+        timer: 1500,
         showConfirmButton: false,
       });
-      navigate("/");
+      navigate("/"); // Pindah ke Dashboard
     }
 
-    // Jika ada error dari backend
-    if (error === "Email sudah terdaftar") {
+    if (error) {
       Swal.fire({
         icon: "error",
         title: "Gagal Daftar",
-        text: "Email tersebut sudah digunakan!",
+        text: error,
       });
     }
   }, [error, isAuthenticated, navigate]);
 
-  // [MODIFIKASI] Ganti nama jadi handleRegister biar jelas
+  // 2. Handle Tombol Daftar
   const handleRegister = () => {
-    // [DEBUG] Log ini WAJIB muncul di Console saat tombol diklik
-    console.log("🟢 TOMBOL DITEKAN! Data:", { name, email, password });
-
     if (!name || !email || !password) {
-      Swal.fire({
-        icon: "warning",
-        title: "Data Belum Lengkap",
-        text: "Mohon isi semua kolom!",
-      });
+      Swal.fire({ icon: "warning", text: "Mohon lengkapi semua data!" });
       return;
     }
 
-    const newUser = {
-      name,
-      email,
-      password,
-    };
-
-    // Panggil fungsi ke Backend
-    register(newUser);
+    // Kirim data ke GlobalState
+    register({ name, email, password });
   };
 
   return (
     <div className="split-screen">
+      {/* BAGIAN KIRI: GAMBAR */}
       <div className="left-pane">
         <div className="pane-content">
-          <h1 className="brand-title">Join Us.</h1>
+          <h1 className="brand-title">Smart Finance.</h1>
           <p className="brand-quote">
-            "Mulai langkah pertamamu menuju kebebasan finansial. Catat, pantau,
-            dan kendalikan uangmu hari ini."
+            "Mulai langkah finansial cerdasmu hari ini. Catat, pantau, dan
+            kembangkan asetmu."
           </p>
         </div>
       </div>
 
+      {/* BAGIAN KANAN: FORM REGISTER */}
       <div className="right-pane">
         <div className="auth-card-clean">
           <div className="auth-header">
-            <h2
-              style={{
-                color: "#2d3436",
-                fontWeight: "800",
-                fontSize: "2rem",
-                marginBottom: "5px",
-              }}
-            >
+            <h2 style={{ color: "#2d3436", fontSize: "2rem" }}>
               Buat Akun Baru 🚀
             </h2>
-            <p style={{ marginTop: "5px", color: "#636e72" }}>
-              Gratis dan hanya butuh 1 menit.
+            <p style={{ marginTop: "10px", color: "#636e72" }}>
+              Isi data di bawah ini
             </p>
           </div>
 
-          {/* [MODIFIKASI] Hapus onSubmit={onSubmit} dari sini. Biarkan form polos. */}
           <form>
             <div className="form-group">
               <label>Nama Lengkap</label>
@@ -101,7 +77,6 @@ export const Register = () => {
                 placeholder="Contoh: Budi Santoso"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                required
               />
             </div>
 
@@ -112,7 +87,6 @@ export const Register = () => {
                 placeholder="nama@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
             </div>
 
@@ -123,14 +97,9 @@ export const Register = () => {
                 placeholder="Minimal 6 karakter..."
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
               />
             </div>
 
-            {/* [MODIFIKASI UTAMA] 
-                1. type="button" (Bukan submit, biar gak refresh halaman)
-                2. onClick={handleRegister} (Langsung panggil fungsi)
-            */}
             <button type="button" onClick={handleRegister} className="auth-btn">
               Daftar Sekarang
             </button>
@@ -138,9 +107,9 @@ export const Register = () => {
 
           <div
             className="auth-footer"
-            style={{ marginTop: "20px", textAlign: "center" }}
+            style={{ textAlign: "center", marginTop: "20px" }}
           >
-            <p style={{ color: "#636e72" }}>
+            <p>
               Sudah punya akun?{" "}
               <Link to="/login" className="auth-link">
                 Login Disini

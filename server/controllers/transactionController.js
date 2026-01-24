@@ -1,12 +1,13 @@
 const Transaction = require("../models/Transaction");
 
-// @desc    Ambil semua transaksi
+// @desc    Ambil semua transaksi (Milik User yang Login)
 // @route   GET /api/v1/transactions
-// @access  Public
+// @access  Private
 exports.getTransactions = async (req, res, next) => {
   try {
-    // Cari semua data di database (mirip: SELECT * FROM transaction)
-    const transactions = await Transaction.find();
+    // [MODIFIKASI] Tambahkan filter { user: req.user.id }
+    // Artinya: Cari transaksi yang kolom 'user'-nya sama dengan ID user yang sedang login
+    const transactions = await Transaction.find({ user: req.user.id });
 
     return res.status(200).json({
       success: true,
@@ -23,13 +24,14 @@ exports.getTransactions = async (req, res, next) => {
 
 // @desc    Tambah transaksi baru
 // @route   POST /api/v1/transactions
-// @access  Public
+// @access  Private
 exports.addTransaction = async (req, res, next) => {
   try {
-    // Ambil data yang dikirim user dari 'body' request
-    const { text, amount } = req.body;
+    // [MODIFIKASI] Ambil data text & amount, lalu tempelkan ID User
+    // req.user.id didapat dari Middleware 'protect' (token JWT)
+    req.body.user = req.user.id;
 
-    // Simpan ke database (mirip: INSERT INTO...)
+    // Simpan ke database dengan ID User tertempel
     const transaction = await Transaction.create(req.body);
 
     return res.status(201).json({
@@ -55,21 +57,25 @@ exports.addTransaction = async (req, res, next) => {
 
 // @desc    Hapus transaksi
 // @route   DELETE /api/v1/transactions/:id
-// @access  Public
+// @access  Private
 exports.deleteTransaction = async (req, res, next) => {
   try {
-    // 1. Cari transaksi berdasarkan ID yang dikirim
-    const transaction = await Transaction.findById(req.params.id);
+    // [MODIFIKASI] Cari transaksi berdasarkan ID DAN Pemiliknya
+    // findOne memastikan kita tidak salah hapus punya orang lain
+    const transaction = await Transaction.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
 
-    // 2. Kalau tidak ketemu, kasih error
+    // 2. Kalau tidak ketemu (atau bukan miliknya)
     if (!transaction) {
       return res.status(404).json({
         success: false,
-        error: "Transaksi tidak ditemukan",
+        error: "Transaksi tidak ditemukan (atau bukan milik Anda)",
       });
     }
 
-    // 3. Kalau ketemu, hapus!
+    // 3. Kalau ketemu dan milik sendiri, hapus!
     await transaction.deleteOne();
 
     return res.status(200).json({
@@ -84,20 +90,26 @@ exports.deleteTransaction = async (req, res, next) => {
   }
 };
 
+// @desc    Update transaksi
+// @route   PUT /api/v1/transactions/:id
+// @access  Private
 exports.updateTransaction = async (req, res, next) => {
   try {
-    // 1. Cari data lama berdasarkan ID
-    let transaction = await Transaction.findById(req.params.id);
+    // [MODIFIKASI] Cek dulu apakah transaksi ini milik user yang login?
+    let transaction = await Transaction.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
 
-    // 2. Kalau tidak ketemu
+    // 2. Kalau tidak ketemu (atau bukan miliknya)
     if (!transaction) {
       return res.status(404).json({
         success: false,
-        error: "Transaksi tidak ditemukan",
+        error: "Transaksi tidak ditemukan (atau bukan milik Anda)",
       });
     }
 
-    // 3. Kalau ketemu, update isinya
+    // 3. Kalau valid, update isinya
     transaction = await Transaction.findByIdAndUpdate(req.params.id, req.body, {
       new: true, // Supaya yang dikembalikan adalah data yang SUDAH diedit
       runValidators: true, // Cek aturan validasi lagi

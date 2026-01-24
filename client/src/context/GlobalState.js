@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useState } from "react";
+import React, { createContext, useReducer, useState, useEffect } from "react";
 import AppReducer from "./AppReducer";
 import axios from "axios";
 
@@ -17,7 +17,7 @@ export const GlobalContext = createContext(initialState);
 export const GlobalProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AppReducer, initialState);
 
-  // State Lokal Helper
+  // State Helper
   const [currentTransaction, setCurrentTransaction] = useState(null);
   const currentMonth = new Date().toISOString().slice(0, 7);
   const [dateFilter, setDateFilter] = useState(currentMonth);
@@ -74,15 +74,15 @@ export const GlobalProvider = ({ children }) => {
 
   // --- ACTIONS AUTH ---
 
-  // 1. Load User (Auto Login)
+  // 1. Load User (Saat Refresh)
   async function loadUser() {
     if (localStorage.token) {
-      // Set token ke header axios biar otomatis kebawa
+      // Set Header saat aplikasi mulai
       axios.defaults.headers.common["Authorization"] =
         `Bearer ${localStorage.token}`;
     } else {
       delete axios.defaults.headers.common["Authorization"];
-      // Jika token tidak ada, jangan panggil API, langsung return
+      dispatch({ type: "AUTH_ERROR" });
       return;
     }
 
@@ -97,16 +97,33 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
+  useEffect(() => {
+    loadUser();
+  }, []);
+
   // 2. Register
   async function register(user) {
     const config = { headers: { "Content-Type": "application/json" } };
     try {
       const res = await axios.post("/api/v1/users/register", user, config);
-      dispatch({ type: "REGISTER_SUCCESS", payload: res.data });
-      // Setelah register sukses, langsung load user
-      loadUser();
+
+      // [FIX PENTING] Langsung set token ke Header Axios DETIK INI JUGA!
+      // Agar request berikutnya (getTransactions) pakai token baru
+      axios.defaults.headers.common["Authorization"] =
+        `Bearer ${res.data.token}`;
+
+      dispatch({
+        type: "REGISTER_SUCCESS",
+        payload: res.data,
+      });
     } catch (err) {
-      dispatch({ type: "REGISTER_FAIL", payload: err.response.data.error });
+      dispatch({
+        type: "REGISTER_FAIL",
+        payload:
+          err.response && err.response.data.error
+            ? err.response.data.error
+            : "Register Gagal",
+      });
     }
   }
 
@@ -115,20 +132,31 @@ export const GlobalProvider = ({ children }) => {
     const config = { headers: { "Content-Type": "application/json" } };
     try {
       const res = await axios.post("/api/v1/users/login", user, config);
-      dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
-      // Setelah login sukses, langsung load user
-      loadUser();
+
+      // [FIX PENTING] Langsung set token ke Header Axios DETIK INI JUGA!
+      axios.defaults.headers.common["Authorization"] =
+        `Bearer ${res.data.token}`;
+
+      dispatch({
+        type: "LOGIN_SUCCESS",
+        payload: res.data,
+      });
     } catch (err) {
-      const message =
-        err.response && err.response.data && err.response.data.error
-          ? err.response.data.error
-          : "Login Gagal. Cek server.";
-      dispatch({ type: "LOGIN_FAIL", payload: message });
+      dispatch({
+        type: "LOGIN_FAIL",
+        payload:
+          err.response && err.response.data.error
+            ? err.response.data.error
+            : "Login Gagal",
+      });
     }
   }
 
   // 4. Logout
   function logout() {
+    // [FIX PENTING] Hapus token dari kepala Axios juga!
+    delete axios.defaults.headers.common["Authorization"];
+
     dispatch({ type: "LOGOUT" });
   }
 
@@ -148,30 +176,22 @@ export const GlobalProvider = ({ children }) => {
         allTransactions: state.transactions,
         error: state.error,
         loading: state.loading,
-
-        // Auth State
         token: state.token,
         isAuthenticated: state.isAuthenticated,
         user: state.user,
-
-        // Helper State
         currentTransaction,
         dateFilter,
         setDateFilter,
-
-        // Functions Transaksi
         getTransactions,
         deleteTransaction,
         addTransaction,
         updateTransaction,
         editTransaction,
         clearEdit,
-
-        // Functions Auth
         register,
         login,
         logout,
-        loadUser, // <--- INI DIA YANG TADINYA HILANG! SEKARANG SUDAH ADA.
+        loadUser,
       }}
     >
       {children}

@@ -57,7 +57,7 @@ export default function AppReducer(state, action) {
       };
 
     // 3. Gagal / Logout (Disatukan biar tidak DUPLICATE)
-    case "AUTH_ERROR": // <--- Ini disatukan disini
+    case "AUTH_ERROR":
     case "REGISTER_FAIL":
     case "LOGIN_FAIL":
     case "LOGOUT":
@@ -69,6 +69,7 @@ export default function AppReducer(state, action) {
         loading: false,
         user: null,
         error: action.payload,
+        transactions: [], // [PENTING] Kosongkan array transaksi saat keluar!
       };
 
     default:
