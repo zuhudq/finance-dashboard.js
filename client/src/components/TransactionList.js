@@ -119,8 +119,6 @@ export const TransactionList = () => {
 
   return (
     <>
-      <h3>Riwayat Transaksi</h3>
-
       {/* LOGIKA EMPTY STATE */}
       {!loading && transactions.length === 0 ? (
         <div

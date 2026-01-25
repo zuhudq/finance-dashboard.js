@@ -10,31 +10,26 @@ import { AddTransaction } from "./AddTransaction";
 import { IncomeExpenseChart } from "./IncomeExpenseChart";
 import { ExpenseChart } from "./ExpenseChart";
 import { MonthFilter } from "./MonthFilter";
-// [BARU] Import Komponen Budgeting
 import { Budgeting } from "./Budgeting";
+import { TransactionSearch } from "./TransactionSearch";
 
 import { GlobalContext } from "../context/GlobalState";
 
 export const Dashboard = () => {
   const { getTransactions, transactions, user } = useContext(GlobalContext);
 
-  // Ambil data saat Dashboard dimuat
   useEffect(() => {
     getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // --- FUNGSI DOWNLOAD PDF ---
   const generatePDF = () => {
     const doc = new jsPDF();
-
-    // Judul
     doc.setFontSize(18);
     doc.text("Laporan Keuangan", 14, 22);
 
     doc.setFontSize(11);
     doc.setTextColor(100);
-    // Tampilkan Nama User jika ada
     doc.text(`User: ${user ? user.name : "Pengguna"}`, 14, 30);
     doc.text(
       `Tanggal Cetak: ${new Date().toLocaleDateString("id-ID")}`,
@@ -42,12 +37,10 @@ export const Dashboard = () => {
       36,
     );
 
-    // Tabel Data
     const tableColumn = ["Tanggal", "Keterangan", "Kategori", "Jumlah"];
     const tableRows = [];
 
     transactions.forEach((t) => {
-      // Format Tanggal
       const dateRaw = t.transactionDate || t.createdAt;
       const formattedDate = new Date(dateRaw).toLocaleDateString("id-ID", {
         day: "numeric",
@@ -81,8 +74,6 @@ export const Dashboard = () => {
   return (
     <div className="container">
       <Header />
-
-      {/* Passing fungsi PDF ke tombol di MonthFilter */}
       <MonthFilter onDownload={generatePDF} />
 
       <div className="dashboard-row summary-row">
@@ -103,7 +94,6 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* [BARU] BARIS BUDGETING (Anti Boros) */}
       <div className="dashboard-row">
         <div style={{ flex: 1 }}>
           <Budgeting />
@@ -112,9 +102,15 @@ export const Dashboard = () => {
 
       <div className="dashboard-row content-row">
         <div className="history-section">
+          {/* JUDUL DISINI SAJA */}
+          <h3>Riwayat Transaksi</h3>
+          <TransactionSearch />
           <TransactionList />
         </div>
+
         <div className="form-section">
+          {/* JUDUL DISINI SAJA */}
+          <h3>Tambah Transaksi Baru</h3>
           <AddTransaction />
         </div>
       </div>

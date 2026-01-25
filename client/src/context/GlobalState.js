@@ -5,7 +5,7 @@ import axios from "axios";
 // Initial State
 const initialState = {
   transactions: [],
-  budgets: [], // [BARU] Wadah untuk data budget
+  budgets: [],
   error: null,
   loading: true,
   token: localStorage.getItem("token"),
@@ -22,6 +22,9 @@ export const GlobalProvider = ({ children }) => {
   const [currentTransaction, setCurrentTransaction] = useState(null);
   const currentMonth = new Date().toISOString().slice(0, 7);
   const [dateFilter, setDateFilter] = useState(currentMonth);
+
+  // [BARU] State untuk teks pencarian
+  const [searchText, setSearchText] = useState("");
 
   // ==========================
   // 1. ACTIONS TRANSAKSI
@@ -77,7 +80,7 @@ export const GlobalProvider = ({ children }) => {
   }
 
   // ==========================
-  // 2. ACTIONS BUDGET (BARU)
+  // 2. ACTIONS BUDGET
   // ==========================
   async function getBudgets() {
     try {
@@ -101,7 +104,6 @@ export const GlobalProvider = ({ children }) => {
   async function deleteBudget(id) {
     try {
       await axios.delete(`/api/v1/budgets/${id}`);
-      // Kita butuh refresh list, jadi panggil getBudgets lagi
       getBudgets();
     } catch (err) {
       dispatch({ type: "BUDGET_ERROR", payload: err.response.data.error });
@@ -112,7 +114,7 @@ export const GlobalProvider = ({ children }) => {
   // 3. ACTIONS AUTHENTICATION
   // ==========================
 
-  // Load User (Cek Token saat refresh)
+  // Load User
   async function loadUser() {
     if (localStorage.token) {
       axios.defaults.headers.common["Authorization"] =
@@ -134,7 +136,6 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
-  // Efek samping: Load User sekali saat mounting
   useEffect(() => {
     loadUser();
   }, []);
@@ -144,15 +145,9 @@ export const GlobalProvider = ({ children }) => {
     const config = { headers: { "Content-Type": "application/json" } };
     try {
       const res = await axios.post("/api/v1/users/register", user, config);
-
-      // Set Token Langsung
       axios.defaults.headers.common["Authorization"] =
         `Bearer ${res.data.token}`;
-
-      dispatch({
-        type: "REGISTER_SUCCESS",
-        payload: res.data,
-      });
+      dispatch({ type: "REGISTER_SUCCESS", payload: res.data });
     } catch (err) {
       dispatch({
         type: "REGISTER_FAIL",
@@ -169,15 +164,9 @@ export const GlobalProvider = ({ children }) => {
     const config = { headers: { "Content-Type": "application/json" } };
     try {
       const res = await axios.post("/api/v1/users/login", user, config);
-
-      // Set Token Langsung
       axios.defaults.headers.common["Authorization"] =
         `Bearer ${res.data.token}`;
-
-      dispatch({
-        type: "LOGIN_SUCCESS",
-        payload: res.data,
-      });
+      dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
     } catch (err) {
       dispatch({
         type: "LOGIN_FAIL",
@@ -196,39 +185,56 @@ export const GlobalProvider = ({ children }) => {
   }
 
   // ==========================
-  // 4. LOGIKA FILTER BULAN
+  // 4. LOGIKA FILTER (DATE & SEARCH)
   // ==========================
   const filteredTransactions = state.transactions.filter((transaction) => {
-    if (dateFilter === "") return true;
-    const transDate = transaction.transactionDate
-      ? new Date(transaction.transactionDate).toISOString().slice(0, 7)
-      : new Date(transaction.createdAt).toISOString().slice(0, 7);
-    return transDate === dateFilter;
+    // 1. Cek Tanggal
+    let dateMatch = true;
+    if (dateFilter !== "") {
+      const transDate = transaction.transactionDate
+        ? new Date(transaction.transactionDate).toISOString().slice(0, 7)
+        : new Date(transaction.createdAt).toISOString().slice(0, 7);
+      dateMatch = transDate === dateFilter;
+    }
+
+    // 2. [BARU] Cek Search Text (Keterangan ATAU Kategori)
+    let textMatch = true;
+    if (searchText !== "") {
+      const textLower = searchText.toLowerCase();
+      // Cek apakah ada kata kunci di 'text' atau 'category'
+      const descMatch = transaction.text.toLowerCase().includes(textLower);
+      const catMatch = transaction.category
+        ? transaction.category.toLowerCase().includes(textLower)
+        : false;
+      textMatch = descMatch || catMatch;
+    }
+
+    // Lolos jika Tanggal COCOK -DAN- Teks COCOK
+    return dateMatch && textMatch;
   });
 
   return (
     <GlobalContext.Provider
       value={{
-        // Data Transaksi (Filtered & Raw)
         transactions: filteredTransactions,
         allTransactions: state.transactions,
 
-        // Data User & Auth
         error: state.error,
         loading: state.loading,
         token: state.token,
         isAuthenticated: state.isAuthenticated,
         user: state.user,
 
-        // Data Budget [BARU]
         budgets: state.budgets,
 
-        // Helper Frontend
         currentTransaction,
         dateFilter,
         setDateFilter,
 
-        // Actions Transaksi
+        // [BARU] Kirim fungsi search ke komponen lain
+        searchText,
+        setSearchText,
+
         getTransactions,
         deleteTransaction,
         addTransaction,
@@ -236,12 +242,10 @@ export const GlobalProvider = ({ children }) => {
         editTransaction,
         clearEdit,
 
-        // Actions Budget [BARU]
         getBudgets,
         setBudget,
         deleteBudget,
 
-        // Actions Auth
         register,
         login,
         logout,

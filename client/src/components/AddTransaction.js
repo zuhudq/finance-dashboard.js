@@ -127,9 +127,7 @@ export const AddTransaction = () => {
           paddingBottom: "10px",
           color: "#2d3436",
         }}
-      >
-        {currentTransaction ? "Edit Transaksi" : "Tambah Transaksi Baru"}
-      </h3>
+      ></h3>
 
       <form onSubmit={onSubmit}>
         {/* INPUT TANGGAL */}
