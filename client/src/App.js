@@ -7,11 +7,12 @@ import {
 } from "react-router-dom";
 import { GlobalProvider } from "./context/GlobalState";
 
-// Import Components
 import { Dashboard } from "./components/Dashboard";
 import { Login } from "./components/Login";
 import { Register } from "./components/Register";
-import { PrivateRoute } from "./components/PrivateRoute"; // <--- Import Satpam
+// [1] IMPORT PROFILE
+import { Profile } from "./components/Profile";
+import { PrivateRoute } from "./components/PrivateRoute";
 
 import "./App.css";
 
@@ -21,11 +22,10 @@ function App() {
       <Router>
         <div className="app-container">
           <Routes>
-            {/* 1. Halaman Publik (Bebas Akses) */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* 2. Halaman Privat (Dijaga Satpam) */}
+            {/* HALAMAN PRIVAT */}
             <Route
               path="/"
               element={
@@ -35,7 +35,16 @@ function App() {
               }
             />
 
-            {/* 3. Catch-All: Kalau nyasar ke link aneh, balikin ke Login */}
+            {/* [2] TAMBAH ROUTE PROFILE (Juga diproteksi) */}
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </div>

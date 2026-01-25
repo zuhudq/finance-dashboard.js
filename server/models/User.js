@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-  // [PERBAIKAN] Ubah 'username' jadi 'name' agar sesuai dengan form register
   name: {
     type: String,
-    required: [true, "Silakan isi nama"],
+    required: [true, "Silakan isi nama lengkap"],
   },
   email: {
     type: String,
@@ -20,6 +19,11 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Silakan isi password"],
     minlength: 6,
     select: false,
+  },
+  // [BARU] Kolom Avatar (menyimpan URL gambar)
+  avatar: {
+    type: String,
+    default: "", // Default kosong jika belum punya
   },
   createdAt: {
     type: Date,
