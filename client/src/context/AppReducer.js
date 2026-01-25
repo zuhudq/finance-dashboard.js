@@ -33,6 +33,30 @@ export default function AppReducer(state, action) {
         error: action.payload,
       };
 
+    // --- BUDGETING ---
+    case "GET_BUDGETS":
+      return {
+        ...state,
+        budgets: action.payload,
+        loading: false,
+      };
+    case "SET_BUDGET":
+      // Update list: Hapus budget lama kategori tsb (kalo ada), masukkan yang baru
+      return {
+        ...state,
+        budgets: [
+          action.payload,
+          ...state.budgets.filter(
+            (b) => b.category !== action.payload.category,
+          ),
+        ],
+      };
+    case "BUDGET_ERROR":
+      return {
+        ...state,
+        error: action.payload,
+      };
+
     // --- AUTHENTICATION ---
 
     // 1. Load User Berhasil (Auto Login)

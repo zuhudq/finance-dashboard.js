@@ -2,7 +2,6 @@ import React, { useEffect, useContext } from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-// [FIX] Mengembalikan semua import komponen yang tadi hilang
 import { Header } from "./Header";
 import { Balance } from "./Balance";
 import { IncomeExpenses } from "./IncomeExpenses";
@@ -11,6 +10,8 @@ import { AddTransaction } from "./AddTransaction";
 import { IncomeExpenseChart } from "./IncomeExpenseChart";
 import { ExpenseChart } from "./ExpenseChart";
 import { MonthFilter } from "./MonthFilter";
+// [BARU] Import Komponen Budgeting
+import { Budgeting } from "./Budgeting";
 
 import { GlobalContext } from "../context/GlobalState";
 
@@ -99,6 +100,13 @@ export const Dashboard = () => {
         </div>
         <div className="chart-card">
           <ExpenseChart />
+        </div>
+      </div>
+
+      {/* [BARU] BARIS BUDGETING (Anti Boros) */}
+      <div className="dashboard-row">
+        <div style={{ flex: 1 }}>
+          <Budgeting />
         </div>
       </div>
 

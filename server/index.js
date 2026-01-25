@@ -10,6 +10,7 @@ dotenv.config();
 // 2. Import Route Files
 const transactions = require("./routes/transactions");
 const users = require("./routes/users");
+const budgets = require("./routes/budgets");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -38,6 +39,7 @@ connectDB();
 // 5. Routes (Jalur API)
 app.use("/api/v1/transactions", transactions);
 app.use("/api/v1/users", users);
+app.use("/api/v1/budgets", budgets);
 
 // 6. Route Default (Cek Server)
 app.get("/", (req, res) => {

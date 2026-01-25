@@ -5,6 +5,7 @@ import axios from "axios";
 // Initial State
 const initialState = {
   transactions: [],
+  budgets: [], // [BARU] Wadah untuk data budget
   error: null,
   loading: true,
   token: localStorage.getItem("token"),
@@ -17,12 +18,14 @@ export const GlobalContext = createContext(initialState);
 export const GlobalProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AppReducer, initialState);
 
-  // State Helper
+  // State Helper (Frontend Only)
   const [currentTransaction, setCurrentTransaction] = useState(null);
   const currentMonth = new Date().toISOString().slice(0, 7);
   const [dateFilter, setDateFilter] = useState(currentMonth);
 
-  // --- ACTIONS TRANSAKSI ---
+  // ==========================
+  // 1. ACTIONS TRANSAKSI
+  // ==========================
   async function getTransactions() {
     try {
       const res = await axios.get("/api/v1/transactions");
@@ -65,6 +68,7 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
+  // Helper Edit
   function editTransaction(transaction) {
     setCurrentTransaction(transaction);
   }
@@ -72,12 +76,45 @@ export const GlobalProvider = ({ children }) => {
     setCurrentTransaction(null);
   }
 
-  // --- ACTIONS AUTH ---
+  // ==========================
+  // 2. ACTIONS BUDGET (BARU)
+  // ==========================
+  async function getBudgets() {
+    try {
+      const res = await axios.get("/api/v1/budgets");
+      dispatch({ type: "GET_BUDGETS", payload: res.data.data });
+    } catch (err) {
+      dispatch({ type: "BUDGET_ERROR", payload: err.response.data.error });
+    }
+  }
 
-  // 1. Load User (Saat Refresh)
+  async function setBudget(budgetData) {
+    const config = { headers: { "Content-Type": "application/json" } };
+    try {
+      const res = await axios.post("/api/v1/budgets", budgetData, config);
+      dispatch({ type: "SET_BUDGET", payload: res.data.data });
+    } catch (err) {
+      dispatch({ type: "BUDGET_ERROR", payload: err.response.data.error });
+    }
+  }
+
+  async function deleteBudget(id) {
+    try {
+      await axios.delete(`/api/v1/budgets/${id}`);
+      // Kita butuh refresh list, jadi panggil getBudgets lagi
+      getBudgets();
+    } catch (err) {
+      dispatch({ type: "BUDGET_ERROR", payload: err.response.data.error });
+    }
+  }
+
+  // ==========================
+  // 3. ACTIONS AUTHENTICATION
+  // ==========================
+
+  // Load User (Cek Token saat refresh)
   async function loadUser() {
     if (localStorage.token) {
-      // Set Header saat aplikasi mulai
       axios.defaults.headers.common["Authorization"] =
         `Bearer ${localStorage.token}`;
     } else {
@@ -97,18 +134,18 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
+  // Efek samping: Load User sekali saat mounting
   useEffect(() => {
     loadUser();
   }, []);
 
-  // 2. Register
+  // Register
   async function register(user) {
     const config = { headers: { "Content-Type": "application/json" } };
     try {
       const res = await axios.post("/api/v1/users/register", user, config);
 
-      // [FIX PENTING] Langsung set token ke Header Axios DETIK INI JUGA!
-      // Agar request berikutnya (getTransactions) pakai token baru
+      // Set Token Langsung
       axios.defaults.headers.common["Authorization"] =
         `Bearer ${res.data.token}`;
 
@@ -127,13 +164,13 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
-  // 3. Login
+  // Login
   async function login(user) {
     const config = { headers: { "Content-Type": "application/json" } };
     try {
       const res = await axios.post("/api/v1/users/login", user, config);
 
-      // [FIX PENTING] Langsung set token ke Header Axios DETIK INI JUGA!
+      // Set Token Langsung
       axios.defaults.headers.common["Authorization"] =
         `Bearer ${res.data.token}`;
 
@@ -152,15 +189,15 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
-  // 4. Logout
+  // Logout
   function logout() {
-    // [FIX PENTING] Hapus token dari kepala Axios juga!
     delete axios.defaults.headers.common["Authorization"];
-
     dispatch({ type: "LOGOUT" });
   }
 
-  // Logika Filter
+  // ==========================
+  // 4. LOGIKA FILTER BULAN
+  // ==========================
   const filteredTransactions = state.transactions.filter((transaction) => {
     if (dateFilter === "") return true;
     const transDate = transaction.transactionDate
@@ -172,22 +209,39 @@ export const GlobalProvider = ({ children }) => {
   return (
     <GlobalContext.Provider
       value={{
+        // Data Transaksi (Filtered & Raw)
         transactions: filteredTransactions,
         allTransactions: state.transactions,
+
+        // Data User & Auth
         error: state.error,
         loading: state.loading,
         token: state.token,
         isAuthenticated: state.isAuthenticated,
         user: state.user,
+
+        // Data Budget [BARU]
+        budgets: state.budgets,
+
+        // Helper Frontend
         currentTransaction,
         dateFilter,
         setDateFilter,
+
+        // Actions Transaksi
         getTransactions,
         deleteTransaction,
         addTransaction,
         updateTransaction,
         editTransaction,
         clearEdit,
+
+        // Actions Budget [BARU]
+        getBudgets,
+        setBudget,
+        deleteBudget,
+
+        // Actions Auth
         register,
         login,
         logout,
