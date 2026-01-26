@@ -96,6 +96,14 @@ export default function AppReducer(state, action) {
         transactions: [], // [PENTING] Kosongkan array transaksi saat keluar!
       };
 
+    case "TOGGLE_THEME":
+      const newTheme = state.theme === "light" ? "dark" : "light";
+      localStorage.setItem("theme", newTheme); // Simpan pilihan user
+      return {
+        ...state,
+        theme: newTheme,
+      };
+
     default:
       return state;
   }

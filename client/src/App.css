@@ -1,337 +1,269 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
 
+/* --- 1. DEFINISI VARIABEL WARNA (Palet Siang & Malam) --- */
 :root {
+  /* WARNA BRAND */
   --primary: #6c5ce7;
   --secondary: #a29bfe;
-  --bg-color: #f0f2f5;
-  --card-bg: #ffffff;
-  --text-dark: #2d3436;
-  --text-light: #636e72;
   --success: #00b894;
-  --danger: #d63031;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  --danger: #ff4757; /* Sedikit lebih cerah biar fresh */
+
+  /* MODE TERANG (Default) */
+  --bg-main: #f0f2f5;
+  --bg-card: #ffffff;
+  --text-primary: #2d3436;
+  --text-secondary: #636e72;
+  --border-color: #dfe6e9;
+  --input-bg: #f8f9fa;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Shadow lebih lembut */
+
+  /* Gradient Mewah untuk Saldo */
+  --balance-bg: linear-gradient(135deg, #ffffff 0%, #f9f9ff 100%);
 }
 
+/* MODE GELAP */
+[data-theme="dark"] {
+  --bg-main: #18191a; /* Gelap Pekat ala Facebook/Twitter */
+  --bg-card: #242526; /* Kartu Dark Grey */
+  --text-primary: #e4e6eb; /* Putih Tulang (enak di mata) */
+  --text-secondary: #b0b3b8; /* Abu terang */
+  --border-color: #3a3b3c;
+  --input-bg: #3a3b3c;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+  /* Gradient Mewah Dark Mode */
+  --balance-bg: linear-gradient(135deg, #242526 0%, #2a2b2e 100%);
+}
+
+/* --- 2. GLOBAL RESET & BODY --- */
 * {
   box-sizing: border-box;
 }
 
 body {
-  /* Ganti Putih Silau jadi Soft Grey-Blueish */
-  background-color: #f0f2f5;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
   min-height: 100vh;
   margin: 0;
   font-family: "Poppins", sans-serif;
-  padding-bottom: 50px; /* Biar konten gak mentok bawah */
+  padding-bottom: 50px;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
-/* Update Container biar gak ketutup navbar dan tetap rapi */
 .container {
   margin: 30px auto;
-  width: 90%; /* Lebih lebar dikit biar lega */
+  width: 90%;
   max-width: 1200px;
-  /* Jarak dari navbar ke konten */
 }
 
+/* --- 3. TYPOGRAPHY & HEADINGS --- */
 h1 {
   margin: 0;
   font-size: 2rem;
-  font-weight: 600;
-  color: var(--text-dark);
+  font-weight: 700;
+  color: var(--text-primary);
 }
+
 h2 {
   margin-bottom: 20px;
-  color: var(--text-dark);
-  font-weight: 600;
+  color: var(--text-primary);
+  font-weight: 700;
   text-align: center;
 }
+
 h3 {
-  margin: 0 0 15px;
-  font-size: 1.1rem;
-  color: var(--text-light);
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+  margin: 0 0 20px;
+  font-size: 1.2rem;
+  color: var(--text-primary); /* Ubah jadi primary biar jelas di dark mode */
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
 }
-h4 {
-  margin: 0;
-  font-weight: 500;
+
+/* Label Kecil (Periode, Judul Chart) */
+h4,
+label,
+.chart-title {
+  color: var(--text-secondary);
+  font-weight: 600;
   font-size: 0.9rem;
   text-transform: uppercase;
-  color: var(--text-light);
+  letter-spacing: 0.5px;
 }
 
-/* --- GRID SYSTEM --- */
+/* --- 4. NAVBAR LUXURY --- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Light Mode: Ungu Gradasi Mewah */
+  background: linear-gradient(135deg, #6c5ce7, #8e7bf5);
+  color: white; /* Teks Selalu Putih di Navbar */
+  padding: 15px 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(108, 92, 231, 0.35);
+  margin-bottom: 35px;
+  position: sticky;
+  top: 20px;
+  z-index: 100;
+  animation: slideDown 0.8s ease-out;
+}
+
+/* Navbar Dark Mode: Dark Indigo Elegant */
+[data-theme="dark"] .navbar {
+  background: linear-gradient(135deg, #2d2d44, #3d3d5c);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.navbar-logo {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: white !important; /* Paksa Putih */
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.5px;
+}
+
+/* Box Profile di Navbar */
+.navbar-profile-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.15); /* Glass effect */
+  padding: 6px 8px 6px 16px;
+  border-radius: 50px;
+  transition: 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.navbar-profile-box:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  color: white;
+}
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: rotate(15deg);
+}
+
+.btn-logout {
+  background: rgba(255, 68, 68, 0.9);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.btn-logout:hover {
+  transform: scale(1.1);
+  background: #ff4757;
+}
+
+/* --- 5. GRID SYSTEM & CARDS --- */
 .dashboard-row {
   display: flex;
-  gap: 20px;
-  margin-bottom: 25px;
+  gap: 25px; /* Jarak antar kartu sedikit diperlebar */
+  margin-bottom: 30px;
+  justify-content: space-between; /* Pastikan ruang terbagi rata */
+  width: 100%; /* Pastikan baris mengambil lebar penuh */
 }
 
-/* BARIS 1: SALDO & PEMASUKAN */
-.summary-row {
-  align-items: stretch;
-}
 .balance-card,
 .inc-exp-card {
-  background: var(--card-bg);
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  flex: 1;
+  flex: 1 1 0px; /* [PENTING] Memaksa kedua kartu punya basis lebar awal yang sama (0px) lalu melar barengan */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
+  /* Tambahkan min-height agar terlihat gagah sejajar */
+  min-height: 200px;
+}
+.summary-row {
+  align-items: stretch;
 }
 
-/* --- CHART LAYOUT (Anti-Bug Edition) --- */
-.charts-row {
-  height: 380px; /* Tinggi fix untuk Desktop */
-  margin-bottom: 25px;
-}
-
-.chart-card {
-  background: var(--card-bg);
-  border-radius: 12px;
+/* Style Kartu Global */
+.balance-card,
+.inc-exp-card,
+.chart-card,
+.history-section,
+.form-section,
+.budget-container {
+  background: var(--bg-card);
+  padding: 30px;
+  border-radius: 20px;
   box-shadow: var(--shadow);
-  padding: 15px;
-  flex: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* [WAJIB] Position relative & overflow hidden mencegah 'kebocoran' chart */
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+/* Efek Hover Halus pada Kartu */
+.balance-card:hover,
+.inc-exp-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+/* --- 6. SALDO & ANGKA (THE SEXY PART) --- */
+.balance-card {
+  background: var(--balance-bg); /* Pakai gradient background */
   position: relative;
   overflow: hidden;
 }
 
-/* Wrapper Grafik - SOLUSI BUG ADA DI SINI */
-.chart-wrapper {
-  width: 100%;
-  /* [KUNCI 1] flex: 1 1 0 -> Basis 0 memaksa wrapper tunduk pada parent, bukan child */
-  flex: 1 1 0;
-  /* [KUNCI 2] min-height: 0 -> Wajib untuk Firefox/Chrome agar flex item bisa mengecil */
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  position: relative;
-}
-
-.chart-title {
-  border: none;
-  text-align: center;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-  color: #2d3436;
-  font-weight: 700;
+.balance-card h4 {
+  font-size: 1.2rem; /* DIPERBESAR biar menonjol */
+  font-weight: 600; /* Ditebalkan */
+  opacity: 1; /* Opacity dibuang biar tegas */
+  margin-bottom: 10px; /* Jarak ke angka diperlebar dikit */
+  letter-spacing: 1px; /* Spasi antar huruf biar elegan */
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  flex-shrink: 0; /* Judul tidak boleh tergencet */
 }
 
-/* --- RESPONSIVE MOBILE (SOLUSI BUG UTAMA) --- */
-@media (max-width: 768px) {
-  .dashboard-row {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .charts-row {
-    height: auto;
-  }
-
-  .chart-card {
-    /* [KUNCI 3] Paksa tinggi kartu 350px. !important agar tidak ditawar browser */
-    height: auto;
-    min-height: 380px;
-    width: 100%;
-    margin-bottom: 15px;
-  }
-
-  /* Tambahan pengaman: Pastikan wrapper tidak meluber di HP */
-  .chart-wrapper {
-    height: 100%;
-    overflow: hidden;
-  }
+/* Angka Utama Saldo */
+.balance-card h1 {
+  font-size: 2.8rem; /* Lebih Besar */
+  font-weight: 800; /* Lebih Tebal */
+  background: linear-gradient(45deg, var(--text-primary), var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* Efek teks gradasi */
+  letter-spacing: -1px;
+  margin: 10px 0;
 }
 
-/* BARIS 3: RIWAYAT & FORM */
-.content-row {
-  display: flex;
-  align-items: flex-start;
-}
-.history-section {
-  flex: 2;
-}
-.form-section {
-  flex: 1;
-}
-
-@media (max-width: 768px) {
-  .history-section,
-  .form-section {
-    flex: 1;
-    width: 100%;
-  }
-}
-
-/* KOMPONEN TRANSAKSI */
-.list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.list li {
-  background: var(--card-bg);
-  box-shadow: var(--shadow);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  transition: transform 0.2s;
-}
-.list li:hover {
-  transform: translateY(-2px);
-}
-.list li.plus {
-  border-left: 5px solid var(--success);
-}
-.list li.minus {
-  border-left: 5px solid var(--danger);
-}
-
-.transaction-info {
-  flex-grow: 1;
-}
-.transaction-text {
-  font-weight: 600;
-  font-size: 1rem;
-  display: block;
-}
-.transaction-cat {
-  font-size: 0.8rem;
-  color: #b2bec3;
-  margin-top: 4px;
-  display: block;
-}
-
-.transaction-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.amount {
-  font-weight: 600;
-  font-size: 1rem;
-  min-width: 100px;
-  text-align: right;
-}
-.amount.plus {
-  color: var(--success);
-}
-.amount.minus {
-  color: var(--danger);
-}
-
-/* TOMBOL AKSI */
-.btn-action {
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  color: white;
-  transition: 0.2s;
-}
-.edit-btn {
-  background-color: #fdcb6e;
-  color: #2d3436;
-}
-.edit-btn:hover {
-  background-color: #e17055;
-  color: white;
-}
-.delete-btn {
-  background-color: #fab1a0;
-  color: #2d3436;
-}
-.delete-btn:hover {
-  background-color: var(--danger);
-  color: white;
-}
-
-/* FORM INPUT */
-form {
-  background: var(--card-bg);
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-}
-.form-control {
-  margin-bottom: 15px;
-}
-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: var(--text-dark);
-}
-input,
-select {
-  border: 1px solid #dfe6e9;
-  border-radius: 8px;
-  padding: 12px;
-  width: 100%;
-  font-size: 1rem;
-  font-family: inherit;
-  background-color: #fdfdfd;
-}
-input:focus,
-select:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: #fff;
-}
-
-.btn {
-  background: var(--primary);
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  width: 100%;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: 0.3s;
-}
-.btn:hover {
-  background: #5649c0;
-  box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
-}
-.btn-cancel {
-  background: #b2bec3;
-}
-.btn-cancel:hover {
-  background: #636e72;
-}
-.form-actions {
-  display: flex;
-  gap: 10px;
-}
-
-/* MONEY DISPLAY */
+/* Angka Pemasukan/Pengeluaran */
 .money {
-  font-size: 1.5rem;
-  letter-spacing: 0.5px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
   margin: 5px 0;
-  font-weight: 600;
 }
 .money.plus {
   color: var(--success);
@@ -340,285 +272,205 @@ select:focus {
   color: var(--danger);
 }
 
-/* --- INPUT DUIT YANG CANTIK --- */
-.input-group {
-  position: relative; /* Wadah relatif */
-  width: 100%;
+.inc-exp-card div {
+  margin-bottom: 15px;
 }
-
-.input-icon {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%); /* Pas di tengah vertikal */
-  color: #b2bec3;
-  font-weight: 600;
-  font-size: 1rem;
-  pointer-events: none; /* Supaya klik tembus ke input */
+.inc-exp-card div:last-child {
+  margin-bottom: 0;
 }
-
-/* Kelas khusus untuk input yang ada 'Rp'-nya */
-.money-input {
-  padding-left: 45px !important; /* Geser teks ke kanan biar gak nabrak 'Rp' */
-  font-weight: 600;
-  color: var(--text-dark);
-  letter-spacing: 1px;
-}
-
-/* --- SPLIT SCREEN AUTH LAYOUT (FINAL V4 - NO SCROLL & MOBILE CARD) --- */
-
-/* 1. CONTAINER UTAMA: FIXED POSITION (SOLUSI SPACE KOSONG) */
-.split-screen {
-  display: flex;
-  position: fixed; /* [KUNCI] Memaksa elemen lepas dari aliran body */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%; /* Full Layar */
-  overflow: hidden;
-  background-color: #eaeff2;
-  z-index: 999; /* Pastikan dia di atas segalanya */
-}
-
-/* KIRI: IMAGE SIDE */
-.left-pane {
-  flex: 1.2;
-  background-image:
-    linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.1) 0%,
-      rgba(0, 0, 0, 0.4) 60%,
-      rgba(0, 0, 0, 0.85) 100%
-    ),
-    url("https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1920&auto=format&fit=crop");
-
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 80px 60px;
-  position: relative;
-}
-
-.pane-content {
-  max-width: 650px;
-  animation: slideUp 1s ease-out;
-  position: relative;
-  z-index: 2;
-}
-
-.brand-title {
-  color: #ffffff;
-  font-size: 4rem;
-  font-weight: 800;
-  margin-bottom: 20px;
-  line-height: 1.1;
-  letter-spacing: -1px;
-  text-shadow:
-    2px 2px 0px rgba(0, 0, 0, 0.2),
-    0 10px 20px rgba(0, 0, 0, 0.5);
-}
-
-.brand-quote {
-  color: #f1f2f6;
-  font-size: 1.2rem;
-  line-height: 1.6;
-  font-weight: 400;
-  border-left: 4px solid #6c5ce7;
-  padding-left: 20px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-}
-
-/* KANAN: FORM SIDE */
-.right-pane {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #eaeff2; /* Background Abu Premium */
-  padding: 40px;
-  /* Jaga-jaga kalau HP-nya pendek banget (landscape), form tetap bisa discroll DI DALAM area ini */
-  overflow-y: auto;
-}
-
-/* KARTU FORM */
-.auth-card-clean {
-  width: 100%;
-  max-width: 440px;
-  background: #ffffff;
-  padding: 50px 40px;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); /* Shadow Mewah */
-  animation: fadeIn 0.8s ease-in;
-}
-
-.auth-header h2 {
-  color: #2d3436;
-  font-weight: 800;
-  font-size: 2.2rem;
+.inc-exp-card h4 {
   margin-bottom: 5px;
 }
 
-/* INPUT STYLING */
-.form-group label {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #636e72;
-  margin-bottom: 8px;
-  display: block;
-  margin-top: 20px;
+/* --- 7. CHART LAYOUT --- */
+.charts-row {
+  height: 420px;
+} /* Sedikit lebih tinggi biar lega */
+.chart-card {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
 }
-
-.form-group input {
+.chart-wrapper {
   width: 100%;
-  padding: 16px;
-  border: 2px solid #f1f2f6;
-  border-radius: 12px;
-  font-size: 1rem;
-  background-color: #f9f9f9;
-  transition: all 0.3s;
-  color: #2d3436;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
-.form-group input:focus {
-  outline: none;
-  background-color: #fff;
-  border-color: #6c5ce7;
-  box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+/* --- 8. CONTENT ROW (Riwayat & Form) --- */
+.content-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+}
+.history-section {
+  flex: 2;
+}
+.form-section {
+  flex: 1;
+  position: sticky;
+  top: 100px;
+} /* Form nempel pas discroll */
+
+/* --- 9. LIST TRANSAKSI (Modern Pill Style) --- */
+.list {
+  list-style: none;
+  padding: 0 5px;
+  margin: 0;
 }
 
-.auth-btn {
-  width: 100%;
-  padding: 18px;
-  background: #6c5ce7;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 30px;
-  transition: 0.3s;
-  box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
-}
-
-.auth-btn:hover {
-  background: #5649c0;
-  transform: translateY(-3px);
-  box-shadow: 0 15px 30px rgba(108, 92, 231, 0.4);
-}
-
-.auth-link {
-  color: #6c5ce7;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-/* ANIMASI */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* --- RESPONSIVE MOBILE (FIXED) --- */
-@media (max-width: 900px) {
-  .left-pane {
-    display: none;
-  } /* Gambar hilang di HP */
-
-  /* [PERBAIKAN 1] Background TETAP abu-abu, jangan putih */
-  .right-pane {
-    background-color: #eaeff2;
-    align-items: center; /* Pastikan kartu di tengah vertikal */
-  }
-
-  /* [PERBAIKAN 2] Kartu TETAP muncul kotaknya (Shadow & Background Putih) */
-  .auth-card-clean {
-    background: #ffffff;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Shadow tetap ada */
-    padding: 30px 25px; /* Padding sedikit dikecilkan biar muat di HP kecil */
-    border-radius: 20px;
-  }
-}
-
-/* --- NAVBAR PREMIUM (GLASSMORPHISM) --- */
-.navbar {
+.list li {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* Warna Putih Transparan + Blur */
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 15px 40px;
+  padding: 18px 24px;
+  margin-bottom: 15px;
   border-radius: 16px;
-  /* Bayangan lembut melayang */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  margin-bottom: 30px;
-  position: sticky; /* Nempel pas discroll */
-  top: 20px;
-  z-index: 100;
-  /* Animasi Masuk */
-  animation: slideDown 0.8s ease-out;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.list li:hover {
+  transform: scale(1.01);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  border-color: var(--primary);
+}
+/* Indikator Warna Kiri */
+.list li.plus {
+  border-left: 6px solid var(--success);
+}
+.list li.minus {
+  border-left: 6px solid var(--danger);
 }
 
-.navbar-logo {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #2d3436;
-  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; /* Efek teks gradasi */
-  display: flex;
-  align-items: center;
+.transaction-text {
+  font-weight: 700;
+  font-size: 1.05rem;
+  display: block;
+  margin-bottom: 4px;
+}
+.transaction-cat {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: var(--bg-main);
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-block;
 }
 
-.navbar-user {
-  display: flex;
-  align-items: center;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #636e72;
-  background: #f1f2f6; /* Kapsul abu buat nama user */
-  padding: 5px 5px 5px 20px;
-  border-radius: 50px;
+.amount {
+  font-weight: 700;
+  font-size: 1.1rem;
+  min-width: 100px;
+  text-align: right;
 }
 
-.btn-logout {
-  background: linear-gradient(135deg, #ff7675, #d63031); /* Gradasi Merah */
-  color: white;
+/* Tombol Aksi */
+.btn-action {
   border: none;
-  padding: 10px 20px;
-  border-radius: 50px; /* Tombol bulat penuh */
+  padding: 8px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 0.9rem;
+  color: white;
+  margin-left: 8px;
+  transition: 0.2s;
+  opacity: 0.6; /* Sedikit transparan kalau gak dihover */
+}
+.list li:hover .btn-action {
+  opacity: 1;
+}
+.edit-btn {
+  background-color: #f1c40f;
+  color: #fff;
+}
+.delete-btn {
+  background-color: #ff4757;
+  color: #fff;
+}
+
+/* --- 10. FORM INPUT & CONTROLS --- */
+.form-control {
+  margin-bottom: 20px;
+}
+label {
+  margin-bottom: 10px;
   font-weight: 600;
-  margin-left: 15px;
-  box-shadow: 0 4px 10px rgba(214, 48, 49, 0.3);
+  color: var(--text-primary);
+}
+
+input,
+select {
+  border: 2px solid var(--border-color); /* Border lebih tebal */
+  border-radius: 12px;
+  padding: 14px;
+  width: 100%;
+  font-size: 1rem;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
   transition: all 0.3s;
 }
-
-.btn-logout:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 15px rgba(214, 48, 49, 0.4);
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
 }
 
-/* Animasi Navbar Turun */
+.btn {
+  background: linear-gradient(135deg, #6c5ce7, #5f27cd); /* Tombol Gradasi */
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  width: 100%;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+}
+
+/* --- 11. SEARCH BAR --- */
+.transaction-search-container input {
+  border-radius: 50px !important;
+  border: 2px solid var(--border-color) !important;
+  background-color: var(--input-bg) !important;
+  padding-left: 50px !important; /* Ruang ikon */
+  color: var(--text-primary) !important;
+  height: 50px;
+}
+.transaction-search-container i.fa-search {
+  left: 20px !important;
+  color: var(--primary) !important;
+}
+
+/* --- 12. BUDGET CONTAINER --- */
+.budget-container {
+  margin-top: 30px;
+  background: var(--bg-card) !important;
+  color: var(--text-primary);
+}
+
+/* --- 13. AUTH & ANIMATIONS (Tetap Sama) --- */
 @keyframes slideDown {
   from {
     transform: translateY(-50px);
@@ -629,38 +481,6 @@ select:focus {
     opacity: 1;
   }
 }
-
-/* --- ANIMASI GLOBAL UNTUK KARTU --- */
-.balance-card,
-.inc-exp-card,
-.chart-card,
-.history-section,
-.form-section {
-  animation: fadeInUp 0.8s ease-out forwards;
-  opacity: 0; /* Mulai transparan */
-  background: #ffffff; /* Pastikan kartu putih bersih */
-  border-radius: 20px; /* Sudut lebih bulat */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); /* Bayangan super soft */
-  border: 1px solid rgba(0, 0, 0, 0.02); /* Border tipis */
-}
-
-/* Delay Animasi biar muncul satu-satu (Waterfall Effect) */
-.balance-card {
-  animation-delay: 0.1s;
-}
-.inc-exp-card {
-  animation-delay: 0.2s;
-}
-.chart-card {
-  animation-delay: 0.3s;
-}
-.history-section {
-  animation-delay: 0.4s;
-}
-.form-section {
-  animation-delay: 0.5s;
-}
-
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -672,168 +492,75 @@ select:focus {
   }
 }
 
-/* Loading Screen sederhana */
-.loading-screen {
-  height: 100vh;
+/* Split Screen Auth Style (Dipendekkan biar gak penuh) */
+.split-screen {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5rem;
-  color: #6c5ce7;
-  font-weight: 600;
-  background-color: #f0f2f5;
-}
-
-/* --- RESPONSIVE PROFILE --- */
-@media (max-width: 768px) {
-  .profile-grid {
-    grid-template-columns: 1fr !important; /* Jadi 1 kolom kalau di HP */
-  }
-}
-
-/* --- AVATAR MODAL ZOOM --- */
-
-/* Layar belakang hitam transparan */
-.avatar-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.85); /* Gelap banget biar fokus */
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+}
+.left-pane {
+  flex: 1.2;
+  background: url("https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1920&auto=format&fit=crop")
+    center/cover;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: white;
+}
+.brand-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+.right-pane {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Harus paling depan */
-  cursor: zoom-out; /* Kursor berubah jadi kaca pembesar minus */
-  animation: fadeInOverlay 0.3s ease;
+  background: var(--bg-main);
+  padding: 40px;
 }
-
-/* Wadah gambar besar */
-.avatar-modal-content {
-  position: relative;
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-  animation: zoomInImage 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efek membal sedikit */
-}
-
-/* Gambar besarnya */
-.avatar-modal-content img {
+.auth-card-clean {
   width: 100%;
-  height: auto;
-  display: block;
-  object-fit: contain; /* Pastikan gambar utuh kotak, tidak terpotong */
+  max-width: 420px;
+  background: var(--bg-card);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
 }
 
-/* Tombol close X di pojok (opsional, karena klik di luar juga nutup) */
-.avatar-modal-close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  color: white;
-  font-size: 2rem;
-  font-weight: bold;
-  cursor: pointer;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  transition: 0.2s;
-}
-.avatar-modal-close:hover {
-  color: #ff7675;
-  transform: scale(1.1);
-}
-
-/* --- ANIMASI --- */
-@keyframes fadeInOverlay {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+/* --- 14. RESPONSIVE --- */
+@media (max-width: 900px) {
+  .left-pane {
+    display: none;
   }
 }
-
-@keyframes zoomInImage {
-  from {
-    transform: scale(0.5);
-    opacity: 0;
+@media (max-width: 768px) {
+  .dashboard-row {
+    flex-direction: column;
+    gap: 20px;
   }
-  to {
-    transform: scale(1);
-    opacity: 1;
+  .charts-row {
+    height: auto;
   }
-}
-
-/* --- FIX UI RAPIDAPI --- */
-
-/* 1. KONTEN BARIS BAWAH (Riwayat & Form) */
-/* Memberikan jarak antar kolom biar tidak dempet */
-.content-row {
-  gap: 30px; /* Jarak antara kolom kiri (riwayat) & kanan (form) */
-  align-items: flex-start; /* Biar tingginya menyesuaikan isi, gak maksa sama */
-}
-
-/* 2. KONTAINER RIWAYAT & FORM (Kotak Putih Besar) */
-.history-section,
-.form-section {
-  background: #fff;
-  padding: 25px 30px; /* [FIX] Padding dalam diperbesar biar judul gak mepet */
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  height: fit-content; /* Tinggi menyesuaikan isi */
-}
-
-/* 3. JUDUL SECTION (Riwayat & Tambah Baru) */
-.history-section h3,
-.form-section h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #2d3436;
-  font-size: 1.3rem;
-  border-bottom: 2px solid #f1f2f6; /* Garis bawah halus */
-  padding-bottom: 15px;
-  /* [FIX] Judul sekarang punya ruang napas di dalam kotak */
-}
-
-/* 4. SEARCH BAR (Kaca Pembesar) */
-/* Kita batasi lebarnya biar gak "kepanjangan" */
-.transaction-search-container {
-  max-width: 100%; /* Tetap full width container induk */
-  margin-bottom: 25px; /* Jarak ke list di bawahnya */
-}
-
-.transaction-search-container input {
-  /* Style input dipercantik */
-  border-radius: 50px !important; /* Jadi lonjong bulat (Pill Shape) */
-  border: 1px solid #dfe6e9 !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-}
-
-/* 5. ITEM TRANSAKSI (Kotak-kotak Data) */
-/* Memberikan jarak kiri-kanan agar tidak mepet dinding container */
-ul.list {
-  padding: 0 5px; /* Sedikit padding kiri kanan */
-}
-
-ul.list li {
-  background-color: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); /* Bayangan halus */
-  border: 1px solid #f1f2f6; /* Border tipis */
-  color: #2d3436;
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-  padding: 15px 20px; /* [FIX] Padding dalam item diperbesar */
-  margin: 15px 0; /* Jarak antar item diperbesar */
-  border-radius: 12px; /* Lebih membulat */
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-}
-
-ul.list li:hover {
-  transform: translateY(-2px); /* Efek naik dikit pas di-hover */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  .chart-card {
+    min-height: 400px;
+    width: 100%;
+  }
+  .history-section,
+  .form-section {
+    width: 100%;
+  }
+  .form-section {
+    position: static;
+  } /* Lepas sticky di HP */
+  .balance-card h1 {
+    font-size: 2.2rem;
+  }
 }

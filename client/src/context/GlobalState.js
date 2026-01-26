@@ -11,6 +11,7 @@ const initialState = {
   token: localStorage.getItem("token"),
   isAuthenticated: null,
   user: null,
+  theme: localStorage.getItem("theme") || "light",
 };
 
 export const GlobalContext = createContext(initialState);
@@ -184,6 +185,11 @@ export const GlobalProvider = ({ children }) => {
     dispatch({ type: "LOGOUT" });
   }
 
+  // --- ACTION THEME ---
+  function toggleTheme() {
+    dispatch({ type: "TOGGLE_THEME" });
+  }
+
   // ==========================
   // 4. LOGIKA FILTER (DATE & SEARCH)
   // ==========================
@@ -250,6 +256,9 @@ export const GlobalProvider = ({ children }) => {
         login,
         logout,
         loadUser,
+
+        theme: state.theme,
+        toggleTheme,
       }}
     >
       {children}
