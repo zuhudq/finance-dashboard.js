@@ -284,17 +284,47 @@ label,
 
 /* --- 7. CHART LAYOUT --- */
 .charts-row {
-  height: 420px;
-} /* Sedikit lebih tinggi biar lega */
+  height: 450px; /* Tambah tinggi dikit biar lega */
+  margin-bottom: 25px;
+}
+
 .chart-card {
   flex: 1;
   height: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: column; /* SUSUN KE BAWAH (Judul di atas, Chart di bawah) */
+  align-items: center; /* Rata tengah */
+  justify-content: center;
   position: relative;
   overflow: hidden;
+  padding: 20px;
 }
+
+/* Judul Chart yang SEKSI & BOLD */
+.chart-title {
+  margin-bottom: 20px; /* Jarak ke chart */
+  font-size: 1.1rem;
+  font-weight: 800; /* Extra Bold */
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px; /* Spasi antar huruf lebar */
+  text-align: center;
+  position: relative;
+  z-index: 10; /* Pastikan di atas chart */
+
+  /* Garis hiasan kecil di bawah judul */
+  display: inline-block;
+}
+.chart-title::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: var(--primary);
+  margin: 8px auto 0;
+  border-radius: 2px;
+}
+
 .chart-wrapper {
   width: 100%;
   flex: 1;
@@ -303,6 +333,19 @@ label,
   align-items: center;
   justify-content: center;
   position: relative;
+}
+
+/* RESPONSIVE MOBILE */
+@media (max-width: 768px) {
+  .charts-row {
+    height: auto;
+  }
+  /* Di HP, tinggi kartu minimal 450px biar chart gak gepeng */
+  .chart-card {
+    min-height: 450px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
 }
 
 /* --- 8. CONTENT ROW (Riwayat & Form) --- */
@@ -562,5 +605,85 @@ select:focus {
   } /* Lepas sticky di HP */
   .balance-card h1 {
     font-size: 2.2rem;
+  }
+}
+
+/* =========================================
+   BAGIAN YANG HILANG: MODAL AVATAR POPUP
+   ========================================= */
+
+/* Layar Hitam Transparan (Overlay) */
+.avatar-modal-overlay {
+  position: fixed; /* KUNCI: Biar melayang di atas segalanya */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9); /* Gelap pekat 90% */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Z-Index harus sangat tinggi (10000) biar di atas Navbar (100) dan Split Screen (999) */
+  z-index: 10000;
+  cursor: zoom-out;
+  animation: fadeInOverlay 0.3s ease;
+}
+
+/* Kotak Pembungkus Gambar */
+.avatar-modal-content {
+  position: relative;
+  max-width: 90%; /* Responsif: Max 90% lebar layar */
+  max-height: 90%; /* Responsif: Max 90% tinggi layar */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: zoomInImage 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efek membal */
+}
+
+/* Gambar Full Size */
+.avatar-modal-content img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* Tombol Close (X) */
+.avatar-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  z-index: 10001;
+  transition: transform 0.2s;
+}
+
+.avatar-modal-close:hover {
+  transform: scale(1.2) rotate(90deg);
+  color: #ff7675;
+}
+
+/* Animasi Masuk */
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomInImage {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }

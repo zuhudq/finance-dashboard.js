@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import ReactDOM from "react-dom"; // [WAJIB] Import ini untuk portal
 import { GlobalContext } from "../context/GlobalState";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -18,7 +19,7 @@ export const Profile = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
-  // [BARU] State untuk mengontrol popup gambar besar
+  // State Modal
   const [showModal, setShowModal] = useState(false);
 
   // Load data awal
@@ -114,7 +115,7 @@ export const Profile = () => {
   return (
     <>
       <div className="container" style={{ maxWidth: "1000px" }}>
-        <h2 style={{ marginBottom: "20px", color: "#2d3436" }}>
+        <h2 style={{ marginBottom: "20px", color: "var(--text-primary)" }}>
           Pengaturan Akun ⚙️
         </h2>
 
@@ -135,7 +136,7 @@ export const Profile = () => {
             <h3
               style={{
                 marginBottom: "20px",
-                borderBottom: "2px solid #f0f0f0",
+                borderBottom: "2px solid var(--border-color)",
                 paddingBottom: "10px",
               }}
             >
@@ -145,11 +146,10 @@ export const Profile = () => {
             <div style={{ textAlign: "center", marginBottom: "20px" }}>
               <div style={{ position: "relative", display: "inline-block" }}>
                 {preview ? (
-                  // [UBAH] Gambar ditambahkan onClick untuk membuka modal
                   <img
                     src={preview}
                     alt="Avatar"
-                    onClick={() => setShowModal(true)} // KLIK DISINI!
+                    onClick={() => setShowModal(true)}
                     title="Klik untuk memperbesar"
                     style={{
                       width: "120px",
@@ -158,12 +158,12 @@ export const Profile = () => {
                       objectFit: "cover",
                       border: "4px solid #6c5ce7",
                       boxShadow: "0 5px 15px rgba(108, 92, 231, 0.3)",
-                      cursor: "zoom-in", // Ubah kursor jadi kaca pembesar
+                      cursor: "zoom-in",
                       transition: "transform 0.2s",
                     }}
                     onMouseEnter={(e) =>
                       (e.target.style.transform = "scale(1.05)")
-                    } // Efek hover
+                    }
                     onMouseLeave={(e) =>
                       (e.target.style.transform = "scale(1)")
                     }
@@ -203,7 +203,7 @@ export const Profile = () => {
                     justifyContent: "center",
                     cursor: "pointer",
                     boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                    zIndex: 2, // Pastikan di atas gambar
+                    zIndex: 2,
                   }}
                   title="Ganti Foto"
                 >
@@ -223,7 +223,7 @@ export const Profile = () => {
               <p
                 style={{
                   fontSize: "0.8rem",
-                  color: "#b2bec3",
+                  color: "var(--text-secondary)",
                   marginTop: "10px",
                 }}
               >
@@ -251,7 +251,7 @@ export const Profile = () => {
             </div>
           </div>
 
-          {/* --- KOLOM KANAN (Password) --- */}
+          {/* --- KOLOM KANAN --- */}
           <div
             className="auth-card-clean"
             style={{ margin: 0, padding: "30px", height: "fit-content" }}
@@ -259,7 +259,7 @@ export const Profile = () => {
             <h3
               style={{
                 marginBottom: "20px",
-                borderBottom: "2px solid #f0f0f0",
+                borderBottom: "2px solid var(--border-color)",
                 paddingBottom: "10px",
               }}
             >
@@ -268,7 +268,7 @@ export const Profile = () => {
 
             <div
               style={{
-                background: "#fff3cd",
+                background: "rgba(255, 238, 186, 0.3)",
                 padding: "15px",
                 borderRadius: "8px",
                 marginBottom: "20px",
@@ -306,47 +306,38 @@ export const Profile = () => {
               style={{
                 margin: "30px 0",
                 border: "0",
-                borderTop: "1px solid #eee",
+                borderTop: "1px solid var(--border-color)",
               }}
             />
 
-            <button
-              className="btn"
-              style={{
-                width: "100%",
-                backgroundColor: "#6c5ce7",
-                fontSize: "1.1rem",
-                padding: "12px",
-                fontWeight: "bold",
-                boxShadow: "0 4px 10px rgba(108, 92, 231, 0.3)",
-              }}
-            >
-              Simpan Perubahan
-            </button>
+            <button className="btn">Simpan Perubahan</button>
           </div>
         </form>
       </div>
 
-      {/* --- [BARU] MODAL POPUP GAMBAR BESAR --- */}
-      {showModal && preview && (
-        <div
-          className="avatar-modal-overlay"
-          onClick={() => setShowModal(false)}
-        >
+      {/* --- MODAL POPUP GAMBAR BESAR (PORTAL FIX) --- */}
+      {showModal &&
+        preview &&
+        ReactDOM.createPortal(
           <div
-            className="avatar-modal-content"
-            onClick={(e) => e.stopPropagation()}
+            className="avatar-modal-overlay"
+            onClick={() => setShowModal(false)}
           >
-            <span
-              className="avatar-modal-close"
-              onClick={() => setShowModal(false)}
+            <div
+              className="avatar-modal-content"
+              onClick={(e) => e.stopPropagation()}
             >
-              &times;
-            </span>
-            <img src={preview} alt="Full Size Avatar" />
-          </div>
-        </div>
-      )}
+              <span
+                className="avatar-modal-close"
+                onClick={() => setShowModal(false)}
+              >
+                &times;
+              </span>
+              <img src={preview} alt="Full Size Avatar" />
+            </div>
+          </div>,
+          document.body, // Koma di dalam kurung portal!
+        )}
     </>
   );
 };
