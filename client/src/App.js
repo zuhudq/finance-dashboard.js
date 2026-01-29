@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
 } from "react-router-dom";
-import { GlobalProvider } from "./context/GlobalState";
+// Import GlobalContext untuk mengambil fungsi load data
+import { GlobalProvider, GlobalContext } from "./context/GlobalState";
 import "./App.css";
 
 // Komponen
@@ -22,7 +23,7 @@ import { BudgetPage } from "./components/pages/BudgetPage";
 import { DreamsPage } from "./components/pages/DreamsPage";
 import { MarketPage } from "./components/pages/MarketPage";
 
-// Layout Khusus dengan Mobile Toggle
+// Layout Khusus dengan Mobile Toggle & DATA LOADER
 const Layout = ({ children }) => {
   const location = useLocation();
   const hideSidebar = ["/login", "/register"];
@@ -30,6 +31,19 @@ const Layout = ({ children }) => {
 
   // State untuk Sidebar Mobile
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // [FIX UTAMA] Ambil data di sini agar tersedia di SEMUA halaman
+  const { getTransactions, getBudgets, loadUser } = useContext(GlobalContext);
+
+  useEffect(() => {
+    // Cek apakah ada token? Jika ada, load user & data
+    if (localStorage.token) {
+      loadUser(); // Ambil data user (Nama, Avatar)
+      getTransactions(); // Ambil riwayat transaksi
+      getBudgets(); // Ambil data budget
+    }
+    // eslint-disable-next-line
+  }, []); // Jalan sekali saat aplikasi/layout dimuat
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
@@ -43,8 +57,6 @@ const Layout = ({ children }) => {
       <div
         style={{
           flex: 1,
-          // Margin kiri cuma ada di Desktop (Layar > 768px diatur CSS)
-          // Di sini kita pakai class CSS saja biar responsif
           width: "100%",
           transition: "margin-left 0.3s ease",
         }}
