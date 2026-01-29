@@ -15,7 +15,7 @@ export const Budgeting = () => {
     // eslint-disable-next-line
   }, []);
 
-  // --- DATABASE TIPS PINTAR ---
+  // --- DATABASE TIPS PINTAR (UPDATE LENGKAP) ---
   const smartTips = {
     Makanan: [
       "💡 Masak sendiri jauh lebih hemat daripada GoFood terus!",
@@ -41,6 +41,25 @@ export const Budgeting = () => {
       "💡 Batasi budget nongkrong tiap minggu.",
       "💡 Cari hobi baru yang tidak menguras dompet.",
     ],
+    // [KATEGORI BARU]
+    Belanja: [
+      "💡 Tunggu diskon tanggal kembar (9.9, 12.12) biar lebih murah!",
+      "💡 Jangan lapar mata, beli yang butuh saja bukan yang lucu.",
+      "💡 Bandingkan harga di 3 marketplace berbeda sebelum checkout.",
+      "💡 Hapus aplikasi belanja kalau tangan gatal ingin checkout terus.",
+    ],
+    Kesehatan: [
+      "💡 Mencegah lebih baik daripada mengobati, yuk olahraga!",
+      "💡 Manfaatkan BPJS atau asuransi kantor semaksimal mungkin.",
+      "💡 Kurangi begadang dan makan junk food, investasi tubuh jangka panjang.",
+      "💡 Beli obat generik, kandungannya sama harganya jauh lebih hemat.",
+    ],
+    Investasi: [
+      "💡 Jangan FOMO saham gorengan, pelajari fundamentalnya!",
+      "💡 Rutin nabung emas/reksa dana sedikit-sedikit lama-lama jadi bukit.",
+      "💡 Diversifikasi aset, jangan taruh telur dalam satu keranjang.",
+      "💡 Ingat, investasi itu lari maraton bukan lari sprint.",
+    ],
     Lainnya: [
       "💡 Selalu catat pengeluaran kecil, mereka bisa jadi bukit!",
       "💡 Terapkan aturan 'Tunggu 24 Jam' sebelum beli barang keinginan.",
@@ -54,15 +73,14 @@ export const Budgeting = () => {
     return specificTips[Math.floor(Math.random() * specificTips.length)];
   };
 
-  // --- LOGIKA HITUNG (UPGRADE) ---
+  // --- LOGIKA HITUNG ---
   const calculateProgress = (catName, budgetLimit) => {
     const expenses = transactions
       .filter((t) => t.amount < 0 && t.category === catName)
       .reduce((acc, t) => acc + Math.abs(t.amount), 0);
 
-    // Hitung Persen & Sisa
     const percentRaw = (expenses / budgetLimit) * 100;
-    const remaining = budgetLimit - expenses; // Sisa budget
+    const remaining = budgetLimit - expenses;
 
     let color = "#2ecc71"; // Hijau
     let message = "";
@@ -79,9 +97,9 @@ export const Budgeting = () => {
 
     return {
       expenses,
-      percent: Math.min(percentRaw, 100), // Untuk panjang bar mentok di 100
-      percentText: Math.round(percentRaw), // [BARU] Untuk teks (bisa > 100%)
-      remaining, // [BARU] Angka sisa
+      percent: Math.min(percentRaw, 100),
+      percentText: Math.round(percentRaw),
+      remaining,
       color,
       isOver: percentRaw >= 100,
       message,
@@ -122,28 +140,21 @@ export const Budgeting = () => {
   };
 
   return (
-    <div
-      className="budget-container"
-      style={{
-        background: "white",
-        padding: "25px",
-        borderRadius: "15px",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-        marginTop: "30px",
-      }}
-    >
+    <div className="budget-container">
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: "10px",
           marginBottom: "20px",
-          borderBottom: "1px solid #eee",
+          borderBottom: "1px solid var(--border-color)",
           paddingBottom: "10px",
         }}
       >
         <span style={{ fontSize: "1.5rem" }}>🎯</span>
-        <h3 style={{ margin: 0, color: "#2d3436" }}>Budgeting & Target</h3>
+        <h3 style={{ margin: 0, color: "var(--text-primary)", border: "none" }}>
+          Budgeting & Target
+        </h3>
       </div>
 
       <form
@@ -153,21 +164,19 @@ export const Budgeting = () => {
           gridTemplateColumns: "1fr 1fr auto",
           gap: "10px",
           marginBottom: "30px",
+          background: "none",
+          padding: 0,
+          boxShadow: "none",
         }}
       >
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          style={{
-            padding: "12px",
-            borderRadius: "8px",
-            border: "1px solid #dfe6e9",
-          }}
-        >
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="Makanan">🍔 Makanan</option>
           <option value="Transport">🚗 Transport</option>
           <option value="Tagihan">🏠 Tagihan</option>
           <option value="Hiburan">🎬 Hiburan</option>
+          <option value="Belanja">🛍️ Belanja</option>
+          <option value="Kesehatan">💊 Kesehatan</option>
+          <option value="Investasi">📈 Investasi</option>
           <option value="Lainnya">⚪ Lainnya</option>
         </select>
         <input
@@ -175,11 +184,6 @@ export const Budgeting = () => {
           value={amount}
           onChange={handleAmountChange}
           placeholder="Batas (Rp)"
-          style={{
-            padding: "12px",
-            borderRadius: "8px",
-            border: "1px solid #dfe6e9",
-          }}
         />
         <button
           className="btn"
@@ -195,8 +199,8 @@ export const Budgeting = () => {
             style={{
               textAlign: "center",
               padding: "20px",
-              color: "#b2bec3",
-              border: "2px dashed #eee",
+              color: "var(--text-secondary)",
+              border: "2px dashed var(--border-color)",
               borderRadius: "10px",
             }}
           >
@@ -227,7 +231,7 @@ export const Budgeting = () => {
                     top: -5,
                     background: "none",
                     border: "none",
-                    color: "#ccc",
+                    color: "var(--text-secondary)",
                     cursor: "pointer",
                     fontSize: "1.2rem",
                   }}
@@ -235,31 +239,29 @@ export const Budgeting = () => {
                   ×
                 </button>
 
-                {/* ROW ATAS: Kategori & Persentase */}
+                {/* ROW ATAS */}
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                     marginBottom: "5px",
-                    alignItems: "flex-end", // Rata bawah biar rapi
+                    alignItems: "flex-end",
                   }}
                 >
-                  {/* KIRI: Nama & Badge */}
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "8px",
                       fontWeight: "600",
-                      color: "#2d3436",
+                      color: "var(--text-primary)",
                     }}
                   >
                     {b.category}
-                    {/* [BARU] Persentase Text */}
                     <span
                       style={{
                         fontSize: "0.8rem",
-                        color: isOver ? "#e74c3c" : "#b2bec3",
+                        color: isOver ? "#e74c3c" : "var(--text-secondary)",
                         fontWeight: "bold",
                       }}
                     >
@@ -280,11 +282,21 @@ export const Budgeting = () => {
                     )}
                   </div>
 
-                  {/* KANAN: Angka Nominal */}
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "0.95rem", fontWeight: "600" }}>
+                    <div
+                      style={{
+                        fontSize: "0.95rem",
+                        fontWeight: "600",
+                        color: "var(--text-primary)",
+                      }}
+                    >
                       {formatRupiah(expenses)}{" "}
-                      <span style={{ color: "#b2bec3", fontSize: "0.8rem" }}>
+                      <span
+                        style={{
+                          color: "var(--text-secondary)",
+                          fontSize: "0.8rem",
+                        }}
+                      >
                         / {formatRupiah(b.amount)}
                       </span>
                     </div>
@@ -298,7 +310,7 @@ export const Budgeting = () => {
                     fontSize: "0.8rem",
                     marginBottom: "5px",
                     fontWeight: "600",
-                    color: isOver ? "#e74c3c" : "#2ecc71", // Merah kalau minus, Hijau kalau sisa
+                    color: isOver ? "#e74c3c" : "#2ecc71",
                   }}
                 >
                   {isOver
@@ -311,9 +323,10 @@ export const Budgeting = () => {
                   style={{
                     width: "100%",
                     height: "12px",
-                    background: "#f1f2f6",
+                    background: "var(--bg-main)", // Adaptif dark mode
                     borderRadius: "10px",
                     overflow: "hidden",
+                    border: "1px solid var(--border-color)",
                   }}
                 >
                   <div
@@ -333,8 +346,10 @@ export const Budgeting = () => {
                   <div
                     style={{
                       marginTop: "8px",
-                      background: isOver ? "#fff5f5" : "#fffbf0",
-                      color: isOver ? "#c0392b" : "#d35400",
+                      background: isOver
+                        ? "rgba(231, 76, 60, 0.1)"
+                        : "rgba(241, 196, 15, 0.1)", // Transparan biar masuk dark mode
+                      color: isOver ? "#e74c3c" : "#f1c40f",
                       padding: "8px 12px",
                       borderRadius: "6px",
                       fontSize: "0.85rem",

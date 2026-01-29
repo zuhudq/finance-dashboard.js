@@ -29,13 +29,16 @@ export const ExpenseChart = () => {
       {
         data: emptyData ? [1] : dataValues,
         backgroundColor: [
-          "#6c5ce7", // Ungu Utama
-          "#00b894", // Hijau Teal
-          "#fdcb6e", // Kuning Emas
-          "#ff7675", // Merah Soft
-          "#0984e3", // Biru Langit
-          "#e17055", // Oranye
-          "#636e72", // Abu Tua
+          "#6c5ce7", // Ungu (Tagihan/Lainnya)
+          "#00b894", // Hijau Teal (Investasi/Gaji)
+          "#fdcb6e", // Kuning (Makanan)
+          "#ff7675", // Merah (Transport)
+          "#0984e3", // Biru (Belanja)
+          "#e17055", // Oranye (Hiburan)
+          "#d63031", // Merah Tua (Kesehatan)
+          "#636e72", // Abu (Lainnya)
+          "#a29bfe", // Ungu Muda
+          "#55efc4", // Hijau Muda
         ],
 
         // --- RAHASIA 3D MODERN ---

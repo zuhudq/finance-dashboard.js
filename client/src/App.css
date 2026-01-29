@@ -687,3 +687,134 @@ select:focus {
     opacity: 1;
   }
 }
+
+/* Update Container agar responsif dengan Sidebar */
+.container {
+  margin: 0 auto;
+  width: 100%; /* Lebar penuh mengikuti parent */
+  max-width: 1100px; /* Batasi biar gak terlalu lebar di monitor besar */
+}
+
+/* Animasi Pindah Halaman Halus */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive Sidebar Mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none; /* Nanti kita buat hamburger menu untuk mobile */
+  }
+  /* Reset margin konten di mobile */
+  div[style*="margin-left: 250px"] {
+    margin-left: 0 !important;
+  }
+}
+
+/* =========================================
+   SIDEBAR & RESPONSIVE LAYOUT (FIXED)
+   ========================================= */
+
+/* Default Sidebar (Desktop) */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background: var(--bg-card);
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-right: 1px solid var(--border-color);
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+/* Margin Konten di Desktop */
+.main-content-with-sidebar {
+  margin-left: 250px;
+}
+
+/* Tombol Close & Hamburger Default (Disembunyikan di Desktop) */
+.close-sidebar-btn,
+.mobile-menu-btn {
+  display: none;
+}
+
+.sidebar-profile:hover {
+  background: var(--border-color) !important;
+}
+
+/* --- MOBILE VERSION (Tablet & HP) --- */
+@media (max-width: 900px) {
+  /* Trigger di 900px ke bawah */
+
+  /* 1. Sidebar Sembunyi Dulu */
+  .sidebar {
+    transform: translateX(-100%); /* Geser ke kiri layar */
+    box-shadow: none;
+  }
+
+  /* 2. Sidebar Muncul saat Aktif */
+  .sidebar.active {
+    transform: translateX(0); /* Geser balik ke layar */
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5); /* Bayangan biar pop-up */
+  }
+
+  /* 3. Margin Konten Hilang (Full Width) */
+  .main-content-with-sidebar {
+    margin-left: 0;
+  }
+
+  /* 4. Tombol Hamburger Muncul */
+  .mobile-menu-btn {
+    display: block;
+    position: fixed;
+    top: 25px; /* Sejajar dengan Navbar */
+    left: 20px;
+    z-index: 101; /* Di atas Navbar */
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(108, 92, 231, 0.4);
+  }
+
+  /* 5. Navbar Geser Dikit Biar Gak Nabrak Hamburger */
+  .navbar {
+    padding-left: 70px; /* Kasih ruang buat tombol hamburger */
+  }
+
+  /* 6. Tombol Close (X) di Sidebar */
+  .close-sidebar-btn {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  /* 7. Overlay Gelap di Belakang Sidebar */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+  }
+  .sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}

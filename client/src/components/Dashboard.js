@@ -14,6 +14,8 @@ import { Budgeting } from "./Budgeting";
 import { TransactionSearch } from "./TransactionSearch";
 
 import { GlobalContext } from "../context/GlobalState";
+import { FinancialGoals } from "./FinancialGoals";
+import { MarketWatch } from "./MarketWatch";
 
 export const Dashboard = () => {
   const { getTransactions, transactions, user } = useContext(GlobalContext);
@@ -97,6 +99,18 @@ export const Dashboard = () => {
       <div className="dashboard-row">
         <div style={{ flex: 1 }}>
           <Budgeting />
+        </div>
+      </div>
+
+      <div className="dashboard-row">
+        <div style={{ flex: 1 }}>
+          <FinancialGoals />
+        </div>
+      </div>
+
+      <div className="dashboard-row">
+        <div style={{ flex: 1 }}>
+          <MarketWatch />
         </div>
       </div>
 
