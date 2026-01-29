@@ -818,3 +818,42 @@ select:focus {
     visibility: visible;
   }
 }
+
+/* --- MARKET PAGE --- */
+.market-card {
+  background: var(--bg-card);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s;
+}
+.market-card:hover {
+  transform: translateY(-5px);
+}
+
+.news-card {
+  background: var(--bg-card);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+.news-card:hover {
+  transform: translateX(5px);
+  border-color: var(--primary);
+  background: var(--input-bg); /* Sedikit beda warna pas hover */
+}
+
+.news-tag {
+  font-size: 0.75rem;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: var(--bg-main);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+}

@@ -15,25 +15,6 @@ export const AddTransaction = () => {
   const [isRecurring, setIsRecurring] = useState(false);
   const [frequency, setFrequency] = useState("Bulanan");
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-
-    if (!text || !amountRaw) {
-      Swal.fire("Eits!", "Isi dulu keterangan dan jumlahnya ya.", "warning");
-      return;
-    }
-
-    // Tentukan tanda plus/minus
-    // Jika user klik tombol "Pengeluaran" (diwakili UI nanti), kita set negatif
-    // Disini kita pakai logika sederhana: user input angka, kita yang atur
-    // Untuk mempermudah, kita anggap inputan user positif, nanti tombol yang menentukan
-
-    // Tapi karena layout lama kita input manual, kita ikuti flow yang ada:
-    // User input -20000 atau 20000
-    // Biar lebih UX friendly, kita buat input angka selalu positif,
-    // lalu ada tombol toggle "Pemasukan / Pengeluaran"
-  };
-
   // Kitarombak flow formnya biar lebih modern (Tanpa ketik minus manual)
   const [type, setType] = useState("expense"); // 'expense' or 'income'
 
